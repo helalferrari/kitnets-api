@@ -21,5 +21,4 @@ public class KitnetController {
     public Kitnet createKitnet(@RequestBody Kitnet kitnet) {
         return kitnetRepository.save(kitnet);
     }
-
-}gi
+}
