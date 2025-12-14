@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface KitnetRepository extends JpaRepository<Kitnet, Integer> {
 
-    // O Spring Data JPA cria a implementação em tempo de execução.
-    // Não precisamos adicionar métodos aqui para operações básicas.
+    // A implementação é criado em tempo de execução pelo Spring JPA
 
 }
