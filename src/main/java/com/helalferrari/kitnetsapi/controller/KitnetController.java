@@ -2,11 +2,11 @@ package com.helalferrari.kitnetsapi.controller;
 
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired; // Importação necessária
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 // Definimos o path base para este Controller, seguindo o padrão REST.
@@ -20,5 +20,15 @@ public class KitnetController {
     @PostMapping
     public Kitnet createKitnet(@RequestBody Kitnet kitnet) {
         return kitnetRepository.save(kitnet);
+    }
+
+    @GetMapping
+    public List<Kitnet> getAllKitnets() {
+        return kitnetRepository.findAll();
+    }
+
+    @GetMapping("/{id}") // O ID agora faz parte do caminho da URL
+    public Optional<Kitnet> getKitnetById(@PathVariable Integer id) {
+        return kitnetRepository.findById(id);
     }
 }
