@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired; // Importação n
 @RequestMapping("/api/kitnets")
 public class KitnetController {
 
-    @Autowired // O Spring injeta automaticamente o Repositório aqui
+    @Autowired // injeta automaticamente o Repositório
     private KitnetRepository kitnetRepository;
 
     // Dentro da classe KitnetController
@@ -22,4 +22,4 @@ public class KitnetController {
         return kitnetRepository.save(kitnet);
     }
 
-}
+}gi
