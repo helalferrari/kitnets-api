@@ -26,7 +26,6 @@ public class Kitnet {
     private Integer vagas;
     private String descricao;
 
-    // Colunas de Data (usando o padrão moderno Java 8+)
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
 

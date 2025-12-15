@@ -27,7 +27,7 @@ public class KitnetController {
         return kitnetRepository.findAll();
     }
 
-    @GetMapping("/{id}") // O ID agora faz parte do caminho da URL
+    @GetMapping("/{id}") // O ID agora faz parte do caminho da URLgit
     public Optional<Kitnet> getKitnetById(@PathVariable Integer id) {
         return kitnetRepository.findById(id);
     }
