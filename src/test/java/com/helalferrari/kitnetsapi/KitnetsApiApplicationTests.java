@@ -1,4 +1,4 @@
-package com.helalferrari.kitnets_api;
+package com.helalferrari.kitnetsapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
