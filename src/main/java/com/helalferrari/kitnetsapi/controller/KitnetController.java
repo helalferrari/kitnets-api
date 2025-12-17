@@ -2,11 +2,14 @@ package com.helalferrari.kitnetsapi.controller;
 
 import com.helalferrari.kitnetsapi.dto.kitnet.KitnetRequestDTO;
 import com.helalferrari.kitnetsapi.model.Kitnet;
+import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
+import com.helalferrari.kitnetsapi.service.FileStorageService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired; // Importação necessária
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import com.helalferrari.kitnetsapi.mapper.KitnetMapper;
 import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
@@ -19,14 +22,18 @@ import java.util.Optional;
 @RequestMapping("/api/kitnets")
 public class KitnetController {
 
-    @Autowired // injeta automaticamente o Repositório
-    private KitnetRepository kitnetRepository;
+    // Garante que eles nunca sejam nulos após a construção.
+    private final KitnetRepository kitnetRepository;
     private final KitnetMapper kitnetMapper;
+    private final FileStorageService fileStorageService;
 
-    // Construtor atualizado para injetar o Mapper
-    public KitnetController(KitnetRepository kitnetRepository, KitnetMapper kitnetMapper) {
+    // 2. Construtor Único (O Spring injeta tudo aqui automaticamente)
+    public KitnetController(KitnetRepository kitnetRepository,
+                            KitnetMapper kitnetMapper,
+                            FileStorageService fileStorageService) {
         this.kitnetRepository = kitnetRepository;
         this.kitnetMapper = kitnetMapper;
+        this.fileStorageService = fileStorageService;
     }
 
     // Dentro da classe KitnetController
@@ -118,17 +125,41 @@ public class KitnetController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<KitnetResponseDTO> create(@RequestBody KitnetRequestDTO requestDTO) {
-        // 1. Converte DTO de Entrada para Entidade
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<KitnetResponseDTO> create(
+            @RequestPart("kitnet") KitnetRequestDTO requestDTO,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) {
+        // 1. Converte DTO -> Entidade
         Kitnet kitnetParaSalvar = kitnetMapper.toEntity(requestDTO);
 
-        // 2. Salva no Banco (O CascadeType.PERSIST vai salvar o Landlord e as Photos automaticamente!)
+        // 2. PRIMEIRA SALVADA: Persiste para gerar o ID do Landlord (se for novo)
+        // O CascadeType.PERSIST garante que o Landlord também seja salvo/atualizado
         Kitnet kitnetSalva = kitnetRepository.save(kitnetParaSalvar);
 
-        // 3. Converte a Entidade Salva para DTO de Resposta
-        KitnetResponseDTO responseDTO = kitnetMapper.toResponseDTO(kitnetSalva);
+        // Agora temos garantia que o ID existe!
+        Long landlordId = kitnetSalva.getLandlord() != null ? kitnetSalva.getLandlord().getId() : null;
 
+        // 3. Processa os arquivos (se houver) usando o ID recém-gerado
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                // Passamos o ID para criar a subpasta correta: uploads/{id}/arquivo.jpg
+                String relativePath = fileStorageService.save(file, landlordId);
+
+                // Montamos a URL completa (ajuste conforme seu servidor de arquivos estáticos)
+                String fileUrl = "/uploads/" + relativePath;
+
+                // Criamos a Photo e vinculamos à Kitnet JÁ SALVA
+                Photo photo = new Photo(null, fileUrl, kitnetSalva);
+                kitnetSalva.addPhoto(photo);
+            }
+
+            // 4. SEGUNDA SALVADA: Atualiza a Kitnet no banco com a lista de fotos
+            kitnetSalva = kitnetRepository.save(kitnetSalva);
+        }
+
+        // 5. Retorno
+        KitnetResponseDTO responseDTO = kitnetMapper.toResponseDTO(kitnetSalva);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }

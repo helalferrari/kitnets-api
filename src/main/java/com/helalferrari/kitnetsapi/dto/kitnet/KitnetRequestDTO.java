@@ -14,7 +14,4 @@ public class KitnetRequestDTO {
 
     // Recebemos o objeto completo ou apenas o ID do proprietário?
     private LandlordDTO landlord;
-
-    // Lista de URLs das fotos
-    private List<PhotoDTO> photos;
 }
