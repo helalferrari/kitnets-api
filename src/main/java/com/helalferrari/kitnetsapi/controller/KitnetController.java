@@ -10,8 +10,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-// Definimos o path base para este Controller, seguindo o padrão REST.
 @RequestMapping("/api/kitnets")
 public class KitnetController {
 
@@ -70,5 +70,31 @@ public class KitnetController {
             // Se não encontrar, lança 404 Not Found, assim como fizemos no PUT.
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Kitnet não encontrada com o ID: " + id);
         }
+    }
+
+    @GetMapping("/search")
+    public List<Kitnet> searchKitnets(
+            @RequestParam(required = false) String cep,
+            @RequestParam(required = false) Double min,
+            @RequestParam(required = false) Double max
+    ) {
+        // Se nenhum parâmetro for fornecido, retorna tudo.
+        if (cep == null && min == null && max == null) {
+            return kitnetRepository.findAll();
+        }
+
+        // 1. Define o valor mínimo (default 0) e máximo (default um valor alto, ex: 1000000)
+        Double valorMin = (min != null) ? min : 0.0;
+        Double valorMax = (max != null) ? max : 1000000.0;
+
+        // 2. Define o termo de busca para o CEP. Se for nulo, usa string vazia para o LIKE
+        String termoBusca = (cep != null) ? cep : "";
+
+        // 3. Chama o método do Repository com todos os filtros
+        return kitnetRepository.findByDescricaoContainingAndValorBetween(
+                termoBusca,
+                valorMin,
+                valorMax
+        );
     }
 }

@@ -11,10 +11,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // 1. Diz ao Spring para carregar apenas o contexto web (Controller)
@@ -131,5 +133,77 @@ class KitnetControllerTest {
 
         // Garante que o método deleteById NUNCA foi chamado.
         Mockito.verify(kitnetRepository, Mockito.never()).deleteById(Mockito.anyInt());
+    }
+
+    @Test
+    void shouldSearchKitnetsWithAllFilters() throws Exception {
+        // Arrange (Preparação)
+        String cepFiltro = "88050";
+        Double minValor = 1300.0;
+        Double maxValor = 1500.0;
+
+        // Simulação do resultado esperado do Repositório (apenas o Loft Moderno atende: 1050.00, CEP 88050)
+        Kitnet loftModerno = new Kitnet();
+        loftModerno.setId(4);
+        loftModerno.setNome("Loft Moderno");
+
+        List<Kitnet> expectedList = List.of(loftModerno);
+
+        // Simulação do Repositório (Mocking)
+        // Quando o Controller chamar o método do Repository com TODOS os argumentos, retorna nossa lista simulada.
+        Mockito.when(kitnetRepository.findByDescricaoContainingAndValorBetween(
+                        cepFiltro,
+                        minValor,
+                        maxValor))
+                .thenReturn(expectedList);
+
+        // Act & Assert (Ação e Verificação)
+        mockMvc.perform(get("/api/kitnets/search")
+                        .param("cep", cepFiltro)   // Parâmetro cep
+                        .param("min", String.valueOf(minValor)) // Parâmetro min
+                        .param("max", String.valueOf(maxValor)) // Parâmetro max
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                // 1. Espera-se que o status HTTP seja 200 OK
+                .andExpect(status().isOk())
+
+                // 2. Espera-se que o JSON retornado tenha exatamente 1 item
+                .andExpect(jsonPath("$.length()").value(1))
+
+                // 3. Espera-se que o primeiro item seja o esperado
+                .andExpect(jsonPath("$[0].nome").value("Loft Moderno"));
+    }
+
+    @Test
+    void shouldReturnEmptyListForNonMatchingSearch() throws Exception {
+        // Arrange (Preparação)
+        // Usamos valores que sabemos que não devem existir (ex: CEP muito longo, faixa absurda)
+        String cepInvalido = "11111-111";
+        Double minAbsurdo = 99999.0;
+        Double maxAbsurdo = 999999.0;
+
+        // Simulação do Repositório (Mocking)
+        // Quando o Controller chamar o Repositório com ESTES argumentos, ele DEVE retornar uma lista vazia.
+        Mockito.when(kitnetRepository.findByDescricaoContainingAndValorBetween(
+                        cepInvalido,
+                        minAbsurdo,
+                        maxAbsurdo))
+                .thenReturn(Collections.emptyList()); // Retorna lista vazia
+
+        // Act & Assert (Ação e Verificação)
+        mockMvc.perform(get("/api/kitnets/search")
+                        .param("cep", cepInvalido)
+                        .param("min", String.valueOf(minAbsurdo))
+                        .param("max", String.valueOf(maxAbsurdo))
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                // 1. Espera-se 200 OK (um resultado vazio é um sucesso REST)
+                .andExpect(status().isOk())
+
+                // 2. Espera-se que o JSON retornado tenha EXATAMENTE 0 itens
+                .andExpect(jsonPath("$.length()").value(0))
+
+                // 3. Espera-se que o corpo seja uma lista vazia
+                .andExpect(jsonPath("$").isEmpty());
     }
 }
