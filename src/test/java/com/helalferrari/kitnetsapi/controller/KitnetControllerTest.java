@@ -40,7 +40,7 @@ class KitnetControllerTest {
     @Test
     void shouldUpdateExistingKitnet() throws Exception {
         // Arrange (Preparação)
-        Integer kitnetId = 1;
+        Long kitnetId = 1L;
         // Objeto de dados simulado para a requisição PUT
         String updatedName = "Kitnet Atualizada TDD";
 
@@ -52,7 +52,7 @@ class KitnetControllerTest {
         // Simulação do Repositório (Mocking)
         // Quando o Controller buscar por ID=1, ele encontrará o objeto.
         Kitnet existingKitnet = new Kitnet(); // A ser buscado
-        existingKitnet.setId(kitnetId);
+        existingKitnet.setId(Long.valueOf(kitnetId));
 
         // Simulação 1: Quando o Controller chamar findById(1), retorna o Optional preenchido
         Mockito.when(kitnetRepository.findById(kitnetId))
@@ -74,7 +74,7 @@ class KitnetControllerTest {
     @Test
     void shouldReturn404WhenUpdatingNonExistingKitnet() throws Exception {
         // Arrange (Preparação)
-        Integer nonExistingId = 999;
+        Long nonExistingId = 999L;
 
         // Objeto de dados simulado (não importa o conteúdo, pois a busca falhará)
         Kitnet updateDetails = new Kitnet();
@@ -99,7 +99,7 @@ class KitnetControllerTest {
     @Test
     void shouldDeleteExistingKitnetAndReturn204() throws Exception {
         // Arrange (Preparação)
-        Integer kitnetId = 1;
+        Long kitnetId = 1L;
 
         // Simulação 1: Quando o Controller chamar existsById(1), retorna TRUE
         Mockito.when(kitnetRepository.existsById(kitnetId))
@@ -120,7 +120,7 @@ class KitnetControllerTest {
     @Test
     void shouldReturn404WhenDeletingNonExistingKitnet() throws Exception {
         // Arrange (Preparação)
-        Integer nonExistingId = 99999;
+        Long nonExistingId = 99999L;
 
         // Simulação: Quando o Controller buscar por ID=999, ele retorna Optional Vazio.
         Mockito.when(kitnetRepository.findById(nonExistingId))
@@ -132,7 +132,7 @@ class KitnetControllerTest {
                 .andExpect(status().isNotFound());
 
         // Garante que o método deleteById NUNCA foi chamado.
-        Mockito.verify(kitnetRepository, Mockito.never()).deleteById(Mockito.anyInt());
+        Mockito.verify(kitnetRepository, Mockito.never()).deleteById((long) Mockito.anyInt());
     }
 
     @Test
@@ -144,7 +144,7 @@ class KitnetControllerTest {
 
         // Simulação do resultado esperado do Repositório (apenas o Loft Moderno atende: 1050.00, CEP 88050)
         Kitnet loftModerno = new Kitnet();
-        loftModerno.setId(4);
+        loftModerno.setId(4L);
         loftModerno.setNome("Loft Moderno");
 
         List<Kitnet> expectedList = List.of(loftModerno);

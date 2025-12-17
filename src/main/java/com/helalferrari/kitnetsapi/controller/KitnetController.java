@@ -1,11 +1,15 @@
 package com.helalferrari.kitnetsapi.controller;
 
+import com.helalferrari.kitnetsapi.dto.kitnet.KitnetRequestDTO;
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired; // Importação necessária
 import org.springframework.web.server.ResponseStatusException;
+import com.helalferrari.kitnetsapi.mapper.KitnetMapper;
+import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +21,13 @@ public class KitnetController {
 
     @Autowired // injeta automaticamente o Repositório
     private KitnetRepository kitnetRepository;
+    private final KitnetMapper kitnetMapper;
+
+    // Construtor atualizado para injetar o Mapper
+    public KitnetController(KitnetRepository kitnetRepository, KitnetMapper kitnetMapper) {
+        this.kitnetRepository = kitnetRepository;
+        this.kitnetMapper = kitnetMapper;
+    }
 
     // Dentro da classe KitnetController
     @PostMapping
@@ -30,12 +41,12 @@ public class KitnetController {
     }
 
     @GetMapping("/{id}") // O ID agora faz parte do caminho da URLgit
-    public Optional<Kitnet> getKitnetById(@PathVariable Integer id) {
+    public Optional<Kitnet> getKitnetById(@PathVariable Long id) {
         return kitnetRepository.findById(id);
     }
 
     @PutMapping("/{id}") // Mapeia para PUT /api/kitnets/{id}
-    public Kitnet updateKitnet(@PathVariable Integer id, @RequestBody Kitnet kitnetDetails) {
+    public Kitnet updateKitnet(@PathVariable Long id, @RequestBody Kitnet kitnetDetails) {
 
         // 1. Tenta encontrar a kitnet existente pelo ID
         return kitnetRepository.findById(id)
@@ -58,7 +69,7 @@ public class KitnetController {
     @DeleteMapping("/{id}") // Mapeia para DELETE /api/kitnets/{id}
     // Retornamos void, pois o padrão 204 No Content não tem corpo de resposta.
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteKitnet(@PathVariable Integer id) {
+    public void deleteKitnet(@PathVariable Long id) {
 
         // 1. Tenta encontrar o item primeiro
         if (kitnetRepository.existsById(id)) {
@@ -96,5 +107,28 @@ public class KitnetController {
                 valorMin,
                 valorMax
         );
+    }
+
+    // Método findById atualizado para usar o DTO
+    @GetMapping("/{id}")
+    public ResponseEntity<KitnetResponseDTO> findById(@PathVariable Long id) {
+        return kitnetRepository.findById(id)
+                .map(kitnetMapper::toResponseDTO) // AQUI: Usa o Mapper
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<KitnetResponseDTO> create(@RequestBody KitnetRequestDTO requestDTO) {
+        // 1. Converte DTO de Entrada para Entidade
+        Kitnet kitnetParaSalvar = kitnetMapper.toEntity(requestDTO);
+
+        // 2. Salva no Banco (O CascadeType.PERSIST vai salvar o Landlord e as Photos automaticamente!)
+        Kitnet kitnetSalva = kitnetRepository.save(kitnetParaSalvar);
+
+        // 3. Converte a Entidade Salva para DTO de Resposta
+        KitnetResponseDTO responseDTO = kitnetMapper.toResponseDTO(kitnetSalva);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }

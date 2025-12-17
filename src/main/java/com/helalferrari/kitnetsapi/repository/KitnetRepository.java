@@ -8,7 +8,7 @@ import java.util.List;
 
 // Informamos ao Spring: Gerencie a Entidade Kitnet, que tem a PK do tipo Integer
 @Repository
-public interface KitnetRepository extends JpaRepository<Kitnet, Integer> {
+public interface KitnetRepository extends JpaRepository<Kitnet, Long> {
 
     List<Kitnet> findByDescricaoContainingAndValorBetween(
             String termo,

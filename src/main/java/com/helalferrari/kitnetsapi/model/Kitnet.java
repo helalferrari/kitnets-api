@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // Anotações JPA e Lombok
 @Entity
@@ -17,7 +21,7 @@ public class Kitnet {
     // Chave Primária (PK - id)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // Colunas de Identificação e Características
     private String nome;
@@ -31,4 +35,23 @@ public class Kitnet {
 
     @Column(name = "data_validade")
     private LocalDateTime dataValidade;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "landlord_id")
+    private Landlord landlord;
+
+    @OneToMany(mappedBy = "kitnet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // Evita Loop Infinito no Log/Debug
+    private List<Photo> photos = new ArrayList<>();
+
+    // Helper Method: Mantém a consistência da lista e do objeto pai
+    public void addPhoto(Photo photo) {
+        photos.add(photo);
+        photo.setKitnet(this);
+    }
+
+    public void removePhoto(Photo photo) {
+        photos.remove(photo);
+        photo.setKitnet(null);
+    }
 }
