@@ -9,7 +9,11 @@ spring:
     show-sql: true
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   sql:
     init:
-      mode: always
+      mode: never # <--- não preciso mais de massa de dados nesse momento
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 20MB

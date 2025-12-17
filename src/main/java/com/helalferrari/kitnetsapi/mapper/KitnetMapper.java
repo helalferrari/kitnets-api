@@ -78,22 +78,11 @@ public class KitnetMapper {
         // Mapear Landlord
         if (dto.getLandlord() != null) {
             Landlord landlord = new Landlord();
-            landlord.setId(dto.getLandlord().getId()); // Se vier ID, pode ser atualização/vinculo
+            landlord.setId(dto.getLandlord().getId());
             landlord.setName(dto.getLandlord().getName());
             landlord.setEmail(dto.getLandlord().getEmail());
-            // landlord.setPhone(...) se tiver no DTO
 
             kitnet.setLandlord(landlord);
-        }
-
-        // Mapear Fotos
-        if (dto.getPhotos() != null) {
-            for (PhotoDTO photoDto : dto.getPhotos()) {
-                Photo photo = new Photo();
-                photo.setUrl(photoDto.getUrl());
-                // Importante: Usar o método helper da Entidade para vincular corretamente
-                kitnet.addPhoto(photo);
-            }
         }
 
         return kitnet;
