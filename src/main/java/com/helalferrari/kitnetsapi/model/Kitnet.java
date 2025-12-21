@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-// Anotações JPA e Lombok
 @Entity
 @Table(name = "KITNET")
 @Data // Lombok: Gera Getters, Setters, toString, equals e hashCode
@@ -31,14 +30,17 @@ public class Kitnet {
     private String descricao;
 
     @Column(name = "data_cadastro")
-    private LocalDateTime dataCadastro;
+    private LocalDateTime dataCadastro = LocalDateTime.now(); // Inicializa com data atual
 
     @Column(name = "data_validade")
     private LocalDateTime dataValidade;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "landlord_id")
-    private Landlord landlord;
+    // --- ALTERAÇÃO AQUI ---
+    // Agora a Kitnet pertence a um User (que tem o papel de LANDLORD)
+    @ManyToOne
+    @JoinColumn(name = "user_id") // Nome da coluna FK no banco de dados
+    private User user;
+    // ----------------------
 
     @OneToMany(mappedBy = "kitnet", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude // Evita Loop Infinito no Log/Debug

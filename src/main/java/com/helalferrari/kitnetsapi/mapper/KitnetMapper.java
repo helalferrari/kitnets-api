@@ -2,11 +2,11 @@ package com.helalferrari.kitnetsapi.mapper;
 
 import com.helalferrari.kitnetsapi.dto.kitnet.KitnetRequestDTO;
 import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
-import com.helalferrari.kitnetsapi.dto.kitnet.LandlordDTO;
 import com.helalferrari.kitnetsapi.dto.kitnet.PhotoDTO;
+import com.helalferrari.kitnetsapi.dto.auth.OwnerDTO; // Importante manter esse import!
 import com.helalferrari.kitnetsapi.model.Kitnet;
-import com.helalferrari.kitnetsapi.model.Landlord;
 import com.helalferrari.kitnetsapi.model.Photo;
+import com.helalferrari.kitnetsapi.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Component
 public class KitnetMapper {
 
-    // Método principal: Converte a Entidade Kitnet para o DTO de Resposta
     public KitnetResponseDTO toResponseDTO(Kitnet kitnet) {
         if (kitnet == null) {
             return null;
@@ -22,7 +21,6 @@ public class KitnetMapper {
 
         KitnetResponseDTO dto = new KitnetResponseDTO();
 
-        // Mapeamento dos campos antigos/básicos (1:1)
         dto.setId(kitnet.getId());
         dto.setNome(kitnet.getNome());
         dto.setValor(kitnet.getValor());
@@ -30,32 +28,28 @@ public class KitnetMapper {
         dto.setTaxa(kitnet.getTaxa());
         dto.setDescricao(kitnet.getDescricao());
 
-        // Mapeamento do Landlord (Relacionamento ManyToOne)
-        if (kitnet.getLandlord() != null) {
-            dto.setLandlord(toLandlordDTO(kitnet.getLandlord()));
+        if (kitnet.getUser() != null) {
+            dto.setLandlord(toOwnerDTO(kitnet.getUser()));
         }
 
-        // Mapeamento das Fotos (Relacionamento OneToMany: Lista)
         if (kitnet.getPhotos() != null) {
             dto.setPhotos(kitnet.getPhotos().stream()
-                    .map(this::toPhotoDTO) // Mapeia cada Photo individualmente
+                    .map(this::toPhotoDTO)
                     .collect(Collectors.toList()));
         }
 
         return dto;
     }
 
-    // Método Auxiliar: Converte Landlord (Entidade) para LandlordDTO
-    private LandlordDTO toLandlordDTO(Landlord landlord) {
-        LandlordDTO dto = new LandlordDTO();
-        dto.setId(landlord.getId());
-        dto.setName(landlord.getName());
-        dto.setEmail(landlord.getEmail());
-        // Não mapeamos o campo 'phone' intencionalmente (se for um campo privado)
-        return dto;
+    private OwnerDTO toOwnerDTO(User user) {
+        return new OwnerDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone()
+        );
     }
 
-    // Método Auxiliar: Converte Photo (Entidade) para PhotoDTO
     private PhotoDTO toPhotoDTO(Photo photo) {
         PhotoDTO dto = new PhotoDTO();
         dto.setId(photo.getId());
@@ -63,27 +57,19 @@ public class KitnetMapper {
         return dto;
     }
 
+    // --- A CORREÇÃO ESTÁ AQUI EMBAIXO ---
     public Kitnet toEntity(KitnetRequestDTO dto) {
         if (dto == null) {
             return null;
         }
 
         Kitnet kitnet = new Kitnet();
-        kitnet.setNome(dto.getNome());
-        kitnet.setValor(dto.getValor());
-        kitnet.setVagas(dto.getVagas());
-        kitnet.setTaxa(dto.getTaxa());
-        kitnet.setDescricao(dto.getDescricao());
-
-        // Mapear Landlord
-        if (dto.getLandlord() != null) {
-            Landlord landlord = new Landlord();
-            landlord.setId(dto.getLandlord().getId());
-            landlord.setName(dto.getLandlord().getName());
-            landlord.setEmail(dto.getLandlord().getEmail());
-
-            kitnet.setLandlord(landlord);
-        }
+        // Mudamos de getNome() para nome(), de getValor() para valor(), etc.
+        kitnet.setNome(dto.nome());
+        kitnet.setValor(dto.valor());
+        kitnet.setVagas(dto.vagas());
+        kitnet.setTaxa(dto.taxa());
+        kitnet.setDescricao(dto.descricao());
 
         return kitnet;
     }

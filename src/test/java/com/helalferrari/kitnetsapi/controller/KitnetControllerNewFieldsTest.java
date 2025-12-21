@@ -1,7 +1,6 @@
 package com.helalferrari.kitnetsapi.controller; // Ajuste o pacote de testes
 
 import com.helalferrari.kitnetsapi.model.Kitnet;
-import com.helalferrari.kitnetsapi.model.Landlord;
 import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
-import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

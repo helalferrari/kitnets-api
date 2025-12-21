@@ -17,3 +17,7 @@ spring:
     multipart:
       max-file-size: 3MB
       max-request-size: 20MB
+api:
+  security:
+    token:
+      secret: MinhaSenhaSuperSecreta123

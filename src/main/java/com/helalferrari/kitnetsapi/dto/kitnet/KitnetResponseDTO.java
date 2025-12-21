@@ -1,7 +1,9 @@
-package com.helalferrari.kitnetsapi.dto.kitnet; // Crie este pacote
+package com.helalferrari.kitnetsapi.dto.kitnet;
 
 import lombok.Data;
 import java.util.List;
+// ADICIONE ESTE IMPORT:
+import com.helalferrari.kitnetsapi.dto.auth.OwnerDTO;
 
 @Data
 public class KitnetResponseDTO {
@@ -12,7 +14,6 @@ public class KitnetResponseDTO {
     private Double taxa;
     private String descricao;
 
-    // Novas informações para o frontend
-    private LandlordDTO landlord; // Usaremos um DTO aninhado
+    private OwnerDTO landlord;
     private List<PhotoDTO> photos;
 }

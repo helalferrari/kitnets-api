@@ -1,7 +1,6 @@
 package com.helalferrari.kitnetsapi;
 
 import com.helalferrari.kitnetsapi.model.Kitnet;
-import com.helalferrari.kitnetsapi.model.Landlord;
 import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,9 @@ import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
 import com.helalferrari.kitnetsapi.mapper.KitnetMapper;
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.model.Photo;
+import com.helalferrari.kitnetsapi.model.User;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
+import com.helalferrari.kitnetsapi.repository.UserRepository;
 import com.helalferrari.kitnetsapi.service.FileStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,21 +28,23 @@ public class KitnetController {
     private final KitnetRepository kitnetRepository;
     private final KitnetMapper kitnetMapper;
     private final FileStorageService fileStorageService;
+    private final UserRepository userRepository; // NOVA DEPENDÊNCIA
 
     // Construtor Único (Injeção de Dependência)
     public KitnetController(KitnetRepository kitnetRepository,
                             KitnetMapper kitnetMapper,
-                            FileStorageService fileStorageService) {
+                            FileStorageService fileStorageService,
+                            UserRepository userRepository) { // Injetando UserRepository
         this.kitnetRepository = kitnetRepository;
         this.kitnetMapper = kitnetMapper;
         this.fileStorageService = fileStorageService;
+        this.userRepository = userRepository;
     }
 
     // --- MÉTODOS DE LEITURA (GET) ---
 
     @GetMapping
     public ResponseEntity<List<KitnetResponseDTO>> getAllKitnets() {
-        // AJUSTE: Agora retorna DTOs para evitar loop infinito na listagem também
         List<KitnetResponseDTO> dtos = kitnetRepository.findAll().stream()
                 .map(kitnetMapper::toResponseDTO)
                 .collect(Collectors.toList());
@@ -73,7 +77,6 @@ public class KitnetController {
             kitnets = kitnetRepository.findByDescricaoContainingAndValorBetween(termoBusca, valorMin, valorMax);
         }
 
-        // AJUSTE: Convertendo para DTO antes de devolver
         List<KitnetResponseDTO> dtos = kitnets.stream()
                 .map(kitnetMapper::toResponseDTO)
                 .collect(Collectors.toList());
@@ -83,38 +86,48 @@ public class KitnetController {
 
     // --- MÉTODOS DE ESCRITA (POST, PUT, DELETE) ---
 
-    // CREATE (AJUSTADO PARA RETORNAR MAP SIMPLES E EVITAR LOOP)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> create(
             @RequestPart("kitnet") KitnetRequestDTO requestDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        // 1. Converte DTO -> Entidade
+        // 1. Busca o Usuário (Dono) pelo ID enviado no JSON
+        // Assume que seu DTO tem o método userId()
+        if(requestDTO.userId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O campo userId é obrigatório");
+        }
+
+        User owner = userRepository.findById(requestDTO.userId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com ID: " + requestDTO.userId()));
+
+        // 2. Converte DTO -> Entidade
         Kitnet kitnetParaSalvar = kitnetMapper.toEntity(requestDTO);
 
-        // 2. PRIMEIRA SALVADA: Gera ID
-        Kitnet kitnetSalva = kitnetRepository.save(kitnetParaSalvar);
-        Long landlordId = kitnetSalva.getLandlord() != null ? kitnetSalva.getLandlord().getId() : null;
+        // 3. Associa a Kitnet ao Usuário encontrado
+        kitnetParaSalvar.setUser(owner);
 
-        // 3. Processa arquivos
+        // 4. PRIMEIRA SALVADA: Gera ID da Kitnet
+        Kitnet kitnetSalva = kitnetRepository.save(kitnetParaSalvar);
+
+        // 5. Processa arquivos (Usando ID do Usuário para organizar pastas)
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                String relativePath = fileStorageService.save(file, landlordId);
-                String fileUrl = "/uploads/" + relativePath; // URL relativa
+                // Agora usamos owner.getId() em vez de landlordId
+                String relativePath = fileStorageService.save(file, owner.getId());
+                String fileUrl = "/uploads/" + relativePath;
 
                 Photo photo = new Photo(null, fileUrl, kitnetSalva);
                 kitnetSalva.addPhoto(photo);
             }
-            // 4. SEGUNDA SALVADA: Atualiza com fotos
+            // 6. SEGUNDA SALVADA: Atualiza com fotos
             kitnetSalva = kitnetRepository.save(kitnetSalva);
         }
 
-        // 5. AJUSTE FINAL: Retorna um JSON simples para evitar Recursão Infinita
+        // 7. Retorno Simplificado
         Map<String, Object> response = new HashMap<>();
         response.put("id", kitnetSalva.getId());
         response.put("mensagem", "Kitnet cadastrada com sucesso!");
 
-        // Retorna 201 Created com o corpo simples
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
