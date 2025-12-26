@@ -33,10 +33,19 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-        var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        // 1. Autentica o usuário
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+
+        // 2. Recupera o objeto User completo do principal
+        User user = (User) auth.getPrincipal();
+
+        // 3. Gera o token
+        var token = tokenService.generateToken(user);
+
+        // 4. Retorna o DTO atualizado com Token + Dados do Usuário
+        // Obs: assumindo que user.getRole() retorna um Enum, usamos .toString() ou .getRole() direto se for String
+        return ResponseEntity.ok(new LoginResponseDTO(token, user.getName(), user.getRole().toString()));
     }
 
     @PostMapping("/register")
