@@ -19,6 +19,7 @@ class AuthenticationDTOTest {
 
         // Assert
         assertNotNull(authDTO);
+        // Ordem correta: (Esperado, Atual)
         assertEquals(email, authDTO.email());
         assertEquals(password, authDTO.password());
     }
@@ -32,14 +33,20 @@ class AuthenticationDTOTest {
         AuthenticationDTO dto3 = new AuthenticationDTO("other@mail.com", "123"); // Diferente
 
         // Assert Equals
-        assertEquals(dto1, dto2); // Deve ser igual
-        assertNotEquals(dto1, dto3); // Deve ser diferente
-        assertNotEquals(dto1, null);
-        assertNotEquals(dto1, new Object());
+        // dto2 é a nossa referência de "esperado", dto1 é o objeto que estamos testando
+        assertEquals(dto2, dto1);
+
+        // dto3 é a referência diferente (esperado), dto1 é o atual
+        assertNotEquals(dto3, dto1);
+
+        // CORREÇÃO DO SONAR AQUI:
+        // O valor 'null' ou 'new Object()' é o esperado (o que estamos comparando contra)
+        assertNotEquals(null, dto1);
+        assertNotEquals(new Object(), dto1);
 
         // Assert HashCode
-        assertEquals(dto1.hashCode(), dto2.hashCode());
-        assertNotEquals(dto1.hashCode(), dto3.hashCode());
+        assertEquals(dto2.hashCode(), dto1.hashCode());
+        assertNotEquals(dto3.hashCode(), dto1.hashCode());
     }
 
     @Test

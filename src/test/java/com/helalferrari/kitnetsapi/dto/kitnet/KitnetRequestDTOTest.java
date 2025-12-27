@@ -23,6 +23,7 @@ class KitnetRequestDTOTest {
 
         // Assert
         assertNotNull(dto);
+        // Ordem Correta: (Esperado, Atual)
         assertEquals(nome, dto.nome());
         assertEquals(valor, dto.valor());
         assertEquals(vagas, dto.vagas());
@@ -40,14 +41,18 @@ class KitnetRequestDTOTest {
         KitnetRequestDTO dto3 = new KitnetRequestDTO("K2", 200.0, 2, 20.0, "D2", 2L); // Diferente
 
         // Assert Equals
-        assertEquals(dto1, dto2);
-        assertNotEquals(dto1, dto3);
-        assertNotEquals(dto1, null);
-        assertNotEquals(dto1, new Object());
+        // Correção do Sonar: O primeiro argumento é sempre a referência (o esperado)
+        assertEquals(dto2, dto1);
+
+        assertNotEquals(dto3, dto1);
+
+        // Aqui era onde o Sonar estava reclamando mais:
+        assertNotEquals(null, dto1);
+        assertNotEquals(new Object(), dto1);
 
         // Assert HashCode
-        assertEquals(dto1.hashCode(), dto2.hashCode());
-        assertNotEquals(dto1.hashCode(), dto3.hashCode());
+        assertEquals(dto2.hashCode(), dto1.hashCode());
+        assertNotEquals(dto3.hashCode(), dto1.hashCode());
     }
 
     @Test
