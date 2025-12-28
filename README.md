@@ -1,4 +1,4 @@
-[# Kitnets API 🏠
+# Kitnets API 🏠
 
 API RESTful desenvolvida para o gerenciamento de Kitnets, facilitando a conexão entre proprietários (landlords) e inquilinos (tenants). O sistema gerencia autenticação, cadastro de imóveis, upload de fotos e buscas personalizadas.
 
