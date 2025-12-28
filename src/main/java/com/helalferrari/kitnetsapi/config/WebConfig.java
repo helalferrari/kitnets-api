@@ -11,7 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Libera para todas as rotas
                 .allowedOrigins("http://localhost:3000") // Permite APENAS seu frontend Next.js
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin");
     }
 
     @Override

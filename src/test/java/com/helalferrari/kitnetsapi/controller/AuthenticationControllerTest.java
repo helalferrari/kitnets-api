@@ -38,6 +38,9 @@ class AuthenticationControllerTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     // Mocks auxiliares para o fluxo do Spring Security
     @Mock
     private Authentication authentication;
@@ -97,6 +100,7 @@ class AuthenticationControllerTest {
 
         // Simula que NÃO existe ninguém com esse email (retorna null)
         when(userRepository.findByEmail(data.email())).thenReturn(null);
+        when(passwordEncoder.encode(any())).thenReturn("encrypted_password");
 
         // Act
         ResponseEntity response = authenticationController.register(data);

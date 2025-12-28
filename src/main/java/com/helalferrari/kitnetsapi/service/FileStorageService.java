@@ -44,8 +44,10 @@ public class FileStorageService {
                 Files.createDirectories(destinationDir);
             }
 
-            // 3. Gera nome único para o arquivo
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            // 3. Gera nome único para o arquivo (sanitizando o nome original)
+            String originalFilename = file.getOriginalFilename();
+            String sanitizedFilename = (originalFilename != null) ? Paths.get(originalFilename).getFileName().toString() : "file";
+            String filename = UUID.randomUUID().toString() + "_" + sanitizedFilename;
             Path filePath = destinationDir.resolve(filename);
 
             // 4. Salva o arquivo original dentro da subpasta

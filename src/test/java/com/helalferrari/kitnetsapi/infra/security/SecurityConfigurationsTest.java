@@ -85,7 +85,8 @@ class SecurityConfigurationsTest {
         assertTrue(config.getAllowedMethods().contains("DELETE"));
 
         // Verifica Headers
-        assertEquals("*", config.getAllowedHeaders().get(0));
+        assertTrue(config.getAllowedHeaders().contains("Authorization"));
+        assertTrue(config.getAllowedHeaders().contains("Content-Type"));
     }
 
     @Test
