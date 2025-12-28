@@ -128,9 +128,6 @@
 				<version>0.8.12</version>
 				<configuration>
 					<excludes>
-						<exclude>**/KitnetsApiApplication.*</exclude>
-						<exclude>**/infra/security/**</exclude>
-
 						<exclude>**/*$MockitoMock$*</exclude>
 						<exclude>**/*$Proxy$*</exclude>
 					</excludes>
