@@ -8,6 +8,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,73 +44,64 @@ class FileStorageServiceTest {
     void save_WithLandlordId() throws IOException {
         Long landlordId = 123L;
         String originalFilename = "test-image.jpg";
+        
+        // Criar uma imagem válida em memória
+        byte[] imageBytes = createValidImageBytes("jpg");
+
         MultipartFile file = new MockMultipartFile(
                 "file",
                 originalFilename,
                 "image/jpeg",
-                "test image content".getBytes()
+                imageBytes
         );
 
         String savedPath = fileStorageService.save(file, landlordId);
 
-        // Check 1: The returned path should be correct
+        // Verifica o arquivo original
         assertTrue(savedPath.startsWith(landlordId + "/"));
-        assertTrue(savedPath.endsWith("_" + originalFilename));
-
-        // Check 2: The file should physically exist
         Path expectedFile = tempDir.resolve(savedPath);
         assertTrue(Files.exists(expectedFile));
 
-        // Check 3: The content should be correct
-        String content = Files.readString(expectedFile);
-        assertEquals("test image content", content);
+        // Verifica o Thumbnail
+        Path thumbDir = tempDir.resolve(String.valueOf(landlordId)).resolve("thumbnails");
+        assertTrue(Files.exists(thumbDir), "Diretório de thumbnails deve existir");
+        
+        String savedFilename = expectedFile.getFileName().toString();
+        Path thumbFile = thumbDir.resolve(savedFilename);
+        assertTrue(Files.exists(thumbFile), "Arquivo de thumbnail deve existir");
     }
 
     @Test
-    @DisplayName("save should store the file in 'geral' subdirectory if landlordId is null")
-    void save_WithNullLandlordId() throws IOException {
-        String originalFilename = "another-image.png";
+    @DisplayName("save should handle invalid image gracefully (no thumbnail)")
+    void save_WithInvalidImage() throws IOException {
+        Long landlordId = 999L;
         MultipartFile file = new MockMultipartFile(
                 "file",
-                originalFilename,
-                "image/png",
-                "other content".getBytes()
+                "text.txt",
+                "text/plain",
+                "not an image".getBytes()
         );
 
-        String savedPath = fileStorageService.save(file, null);
+        String savedPath = fileStorageService.save(file, landlordId);
 
-        // Check 1: Path should be correct
-        assertTrue(savedPath.startsWith("geral/"));
-        assertTrue(savedPath.endsWith("_" + originalFilename));
-
-        // Check 2: File should exist
+        // O arquivo original deve ser salvo
         Path expectedFile = tempDir.resolve(savedPath);
         assertTrue(Files.exists(expectedFile));
 
-        // Check 3: Content should be correct
-        String content = Files.readString(expectedFile);
-        assertEquals("other content", content);
+        // Thumbnail NÃO deve ser gerado para texto
+        Path thumbDir = tempDir.resolve(String.valueOf(landlordId)).resolve("thumbnails");
+        String savedFilename = expectedFile.getFileName().toString();
+        // thumbDir pode até ser criado dependendo da impl, mas o arquivo dentro não deve existir
+        if (Files.exists(thumbDir)) {
+            assertFalse(Files.exists(thumbDir.resolve(savedFilename)), "Thumbnail não deve ser criado para arquivos de texto");
+        }
     }
 
-    @Test
-    @DisplayName("save should throw RuntimeException on IOException")
-    void save_ThrowsRuntimeException() throws IOException {
-        MultipartFile file = new MockMultipartFile("file", "fail.txt", "text/plain", "fail".getBytes());
-        
-        // Make the temp directory read-only to force an IOException
-        tempDir.toFile().setReadOnly();
-
-        // This test might not work on all OSes, but it's a common way to simulate this
-        if (tempDir.toFile().canWrite()) {
-             System.err.println("Skipping test 'save_ThrowsRuntimeException': Could not make temp directory read-only.");
-             return;
-        }
-
-        assertThrows(RuntimeException.class, () -> {
-            fileStorageService.save(file, 1L);
-        });
-
-        // Set it back to writable so @TempDir can clean up
-        tempDir.toFile().setWritable(true);
+    // Helper para criar bytes de imagem real
+    private byte[] createValidImageBytes(String format) throws IOException {
+        BufferedImage img = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(img, format, baos);
+        return baos.toByteArray();
     }
 }

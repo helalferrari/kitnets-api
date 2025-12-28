@@ -54,6 +54,21 @@ public class KitnetMapper {
         PhotoDTO dto = new PhotoDTO();
         dto.setId(photo.getId());
         dto.setUrl(photo.getUrl());
+
+        // Gera a URL do thumbnail baseada na URL original
+        // Original: /uploads/123/foto.jpg
+        // Thumbnail: /uploads/123/thumbnails/foto.jpg
+        if (photo.getUrl() != null && photo.getUrl().contains("/")) {
+            String originalUrl = photo.getUrl();
+            int lastSlashIndex = originalUrl.lastIndexOf("/");
+            String path = originalUrl.substring(0, lastSlashIndex);
+            String filename = originalUrl.substring(lastSlashIndex + 1);
+            
+            dto.setThumbnailUrl(path + "/thumbnails/" + filename);
+        } else {
+            dto.setThumbnailUrl(photo.getUrl()); // Fallback
+        }
+        
         return dto;
     }
 

@@ -29,8 +29,9 @@ class KitnetMapperTest {
         user.setEmail("cobrador@vila.com");
         user.setPhone("999");
 
-        // 2. Cria a Foto
-        Photo photo = new Photo(10L, "http://foto.com", null);
+        // 2. Cria a Foto com URL simulando o padrao /uploads/ID/arquivo
+        String originalUrl = "/uploads/50/foto-chaves.jpg";
+        Photo photo = new Photo(10L, originalUrl, null);
         List<Photo> photos = new ArrayList<>();
         photos.add(photo);
 
@@ -61,7 +62,10 @@ class KitnetMapperTest {
         // Verifica mapeamento de List<Photo> -> List<PhotoDTO>
         assertNotNull(result.getPhotos());
         assertFalse(result.getPhotos().isEmpty());
-        assertEquals(photo.getUrl(), result.getPhotos().get(0).getUrl());
+        assertEquals(originalUrl, result.getPhotos().get(0).getUrl());
+        
+        // Verifica se a URL do thumbnail foi gerada corretamente
+        assertEquals("/uploads/50/thumbnails/foto-chaves.jpg", result.getPhotos().get(0).getThumbnailUrl());
     }
 
     @Test
