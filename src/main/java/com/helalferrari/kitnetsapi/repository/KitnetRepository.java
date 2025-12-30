@@ -16,4 +16,6 @@ public interface KitnetRepository extends JpaRepository<Kitnet, Long> {
             Double valorMaximo
     );
 
+    List<Kitnet> findByUser(com.helalferrari.kitnetsapi.model.User user);
+
 }

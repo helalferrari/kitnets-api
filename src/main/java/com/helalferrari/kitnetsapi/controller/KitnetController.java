@@ -87,6 +87,18 @@ public class KitnetController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/my-kitnets")
+    public ResponseEntity<List<KitnetResponseDTO>> getMyKitnets() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        List<KitnetResponseDTO> dtos = kitnetRepository.findByUser(currentUser).stream()
+                .map(kitnetMapper::toResponseDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
+
     // --- MÉTODOS DE ESCRITA (POST, PUT, DELETE) ---
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
