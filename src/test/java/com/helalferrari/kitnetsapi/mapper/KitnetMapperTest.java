@@ -124,4 +124,28 @@ class KitnetMapperTest {
     void shouldReturnNullFromRequestDTO() {
         assertNull(mapper.toEntity(null));
     }
+
+    @Test
+    @DisplayName("Should generate thumbnail URL correctly for different path formats")
+    void shouldGenerateThumbnailUrlCorrectly() {
+        // Case 1: Root file (should ideally not happen with our storage service but for robustness)
+        Photo photo1 = new Photo("foto.jpg");
+        assertEquals("foto.jpg", mapper.toResponseDTO(wrapInKitnet(photo1)).getPhotos().get(0).getThumbnailUrl());
+
+        // Case 2: File with slash but no path before it (e.g. /foto.jpg)
+        Photo photo2 = new Photo("/foto.jpg");
+        assertEquals("/thumbnails/foto.jpg", mapper.toResponseDTO(wrapInKitnet(photo2)).getPhotos().get(0).getThumbnailUrl());
+
+        // Case 3: Standard upload path
+        Photo photo3 = new Photo("/uploads/1/foto.jpg");
+        assertEquals("/uploads/1/thumbnails/foto.jpg", mapper.toResponseDTO(wrapInKitnet(photo3)).getPhotos().get(0).getThumbnailUrl());
+    }
+
+    private Kitnet wrapInKitnet(Photo photo) {
+        Kitnet kitnet = new Kitnet();
+        List<Photo> photos = new ArrayList<>();
+        photos.add(photo);
+        kitnet.setPhotos(photos);
+        return kitnet;
+    }
 }
