@@ -1,9 +1,10 @@
 # Kitnets API 🏠
 
-API RESTful desenvolvida para o gerenciamento de Kitnets, facilitando a conexão entre proprietários (landlords) e inquilinos (tenants). O sistema gerencia autenticação, cadastro de imóveis, upload de fotos e buscas personalizadas.
+API RESTful desenvolvida para o gerenciamento de Kitnets, facilitando a conexão entre proprietários (landlords) e inquilinos (tenants). O sistema gerencia autenticação, cadastro e **edição** de imóveis, upload de fotos e buscas personalizadas.
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.12-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![SonarQube](https://img.shields.io/badge/SonarQube-Integration-4E9BCD?style=for-the-badge&logo=sonarqube&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
 ## 🛠️ Tecnologias Utilizadas
@@ -26,6 +27,7 @@ Este projeto foi construído utilizando as melhores práticas do ecossistema Jav
 - **JUnit 5:** Framework de testes unitários.
 - **Mockito:** Framework para criação de mocks em testes.
 - **JaCoCo:** Ferramenta para análise de cobertura de código (Code Coverage).
+- **SonarQube:** Análise contínua de qualidade de código (Code Smells, Bugs, Vulnerabilidades).
 - **H2 Database:** Banco de dados em memória para execução rápida de testes.
 
 ---
@@ -90,10 +92,15 @@ src/main/java/com/helalferrari/kitnetsapi
    mvnw.cmd spring-boot:run
    ```
 
-4. **Executar Testes:**
+4. **Executar Testes e Análise Sonar:**
    Para rodar a suíte de testes e verificar a cobertura:
    ```bash
-   ./mvnw test
+   ./mvnw clean verify
+   ```
+   
+   Para enviar a análise ao SonarQube (requer instância rodando localmente):
+   ```bash
+   ./mvnw sonar:sonar -Dsonar.token=SEU_TOKEN
    ```
 
 ---
@@ -116,4 +123,3 @@ Contribuições são bem-vindas! Siga os passos abaixo:
 Este projeto está licenciado sob a licença **MIT**. Consulte o arquivo `LICENSE` para mais detalhes.
 
 A licença MIT permite que você use, copie, modifique, mescle, publique, distribua, sublicencie e/ou venda cópias do Software, desde que o aviso de direitos autorais e o aviso de permissão sejam incluídos em todas as cópias ou partes substanciais do Software.
-1. [ ] ](https://github.com/helalferrari/kitnets-api/blob/main/README.md)
