@@ -40,6 +40,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/kitnets/my-kitnets").authenticated()
                         // Libera GET nas kitnets para todos
                         .requestMatchers(HttpMethod.GET, "/api/kitnets").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/kitnets/**").permitAll()

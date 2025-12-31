@@ -2,6 +2,7 @@ package com.helalferrari.kitnetsapi.model;
 
 import com.helalferrari.kitnetsapi.model.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
     // Getters e Setters normais
