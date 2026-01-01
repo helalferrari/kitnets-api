@@ -1,16 +1,24 @@
 package com.helalferrari.kitnetsapi.dto.kitnet;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.helalferrari.kitnetsapi.model.enums.Amenity;
+import com.helalferrari.kitnetsapi.model.enums.BathroomType;
+import java.util.Set;
 
 public record KitnetRequestDTO(
-        String nome,
-        Double valor,
-        Integer vagas,
-        Double taxa,
-        String descricao,
+        String name,
+        Double value,
+        Integer parkingSpaces,
+        Double fee,
+        String description,
+        Double area,
+        Boolean furnished,
+        Boolean petsAllowed,
+        BathroomType bathroomType,
+        Set<Amenity> amenities,
         Long userId,
         String cep,
-        String logradouro,
+        String street,
         String complement,
         String number,
         String neighborhood,

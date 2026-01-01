@@ -5,10 +5,13 @@ import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.model.User;
+import com.helalferrari.kitnetsapi.model.enums.Amenity;
+import com.helalferrari.kitnetsapi.model.enums.BathroomType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,17 +41,24 @@ class KitnetMapperTest {
         // 3. Cria a Kitnet completa
         Kitnet kitnet = new Kitnet();
         kitnet.setId(1L);
-        kitnet.setNome("Vila do Chaves");
-        kitnet.setValor(500.0);
-        kitnet.setVagas(2);
-        kitnet.setTaxa(10.0);
-        kitnet.setDescricao("Boa vizinhanca");
+        kitnet.setName("Vila do Chaves");
+        kitnet.setValue(500.0);
+        kitnet.setParkingSpaces(2);
+        kitnet.setFee(10.0);
+        kitnet.setDescription("Boa vizinhanca");
+        
+        kitnet.setArea(40.0);
+        kitnet.setFurnished(true);
+        kitnet.setPetsAllowed(true);
+        kitnet.setBathroomType(BathroomType.COMPARTILHADO);
+        kitnet.setAmenities(new HashSet<>());
+        
         kitnet.setUser(user);
         kitnet.setPhotos(photos);
         
         // Address fields
         kitnet.setCep("00000-000");
-        kitnet.setLogradouro("Rua");
+        kitnet.setStreet("Rua");
         kitnet.setComplement("Comp");
         kitnet.setNumber("123");
         kitnet.setNeighborhood("Bairro");
@@ -64,9 +74,12 @@ class KitnetMapperTest {
         // Assert
         assertNotNull(result);
         assertEquals(kitnet.getId(), result.getId());
-        assertEquals(kitnet.getNome(), result.getNome());
+        assertEquals(kitnet.getName(), result.getName());
+        assertEquals(kitnet.getArea(), result.getArea());
+        assertEquals(kitnet.getFurnished(), result.getFurnished());
+        
         assertEquals(kitnet.getCep(), result.getCep());
-        assertEquals(kitnet.getLogradouro(), result.getLogradouro());
+        assertEquals(kitnet.getStreet(), result.getStreet());
         assertEquals(kitnet.getComplement(), result.getComplement());
         assertEquals(kitnet.getNumber(), result.getNumber());
         assertEquals(kitnet.getNeighborhood(), result.getNeighborhood());
@@ -125,6 +138,11 @@ class KitnetMapperTest {
                 1,
                 50.0,
                 "Descricao",
+                30.0, // area
+                false, // furnished
+                false, // pets
+                BathroomType.PRIVATIVO,
+                new HashSet<>(),
                 99L,
                 "01001-000",
                 "Praça da Sé",
@@ -143,13 +161,15 @@ class KitnetMapperTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(dto.nome(), result.getNome());
-        assertEquals(dto.valor(), result.getValor());
-        assertEquals(dto.vagas(), result.getVagas());
-        assertEquals(dto.taxa(), result.getTaxa());
-        assertEquals(dto.descricao(), result.getDescricao());
+        assertEquals(dto.name(), result.getName());
+        assertEquals(dto.value(), result.getValue());
+        assertEquals(dto.parkingSpaces(), result.getParkingSpaces());
+        assertEquals(dto.fee(), result.getFee());
+        assertEquals(dto.description(), result.getDescription());
+        assertEquals(dto.area(), result.getArea());
+        
         assertEquals(dto.cep(), result.getCep());
-        assertEquals(dto.logradouro(), result.getLogradouro());
+        assertEquals(dto.street(), result.getStreet());
         assertEquals(dto.complement(), result.getComplement());
         assertEquals(dto.number(), result.getNumber());
         assertEquals(dto.neighborhood(), result.getNeighborhood());

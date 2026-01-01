@@ -90,33 +90,36 @@ class KitnetControllerTest {
         
         // Dados de entrada (o que o usuário envia)
         Kitnet inputKitnet = new Kitnet();
-        inputKitnet.setNome("Kitnet Atualizada TDD");
-        inputKitnet.setValor(1500.00);
-        inputKitnet.setTaxa(200.00);
-        inputKitnet.setVagas(2);
-        inputKitnet.setDescricao("Descrição atualizada via teste");
+        inputKitnet.setName("Kitnet Atualizada TDD");
+        inputKitnet.setValue(1500.00);
+        inputKitnet.setFee(200.00);
+        inputKitnet.setParkingSpaces(2);
+        inputKitnet.setDescription("Descrição atualizada via teste");
         inputKitnet.setCep("00000-000");
         inputKitnet.setIbge("1234567");
         inputKitnet.setLongitude("1.0");
         inputKitnet.setLatitude("2.0");
+        
+        inputKitnet.setArea(50.0);
+        inputKitnet.setFurnished(true);
 
         // Estado anterior (o que já existe no banco)
         Kitnet existingKitnet = new Kitnet();
         existingKitnet.setId(kitnetId);
-        existingKitnet.setNome("Nome Antigo");
-        existingKitnet.setValor(1000.00);
-        existingKitnet.setTaxa(100.00);
-        existingKitnet.setVagas(1);
-        existingKitnet.setDescricao("Descrição antiga");
+        existingKitnet.setName("Nome Antigo");
+        existingKitnet.setValue(1000.00);
+        existingKitnet.setFee(100.00);
+        existingKitnet.setParkingSpaces(1);
+        existingKitnet.setDescription("Descrição antiga");
 
         // O que esperamos que seja salvo
         Kitnet savedKitnet = new Kitnet();
         savedKitnet.setId(kitnetId);
-        savedKitnet.setNome("Kitnet Atualizada TDD");
-        savedKitnet.setValor(1500.00);
-        savedKitnet.setTaxa(200.00);
-        savedKitnet.setVagas(2);
-        savedKitnet.setDescricao("Descrição atualizada via teste");
+        savedKitnet.setName("Kitnet Atualizada TDD");
+        savedKitnet.setValue(1500.00);
+        savedKitnet.setFee(200.00);
+        savedKitnet.setParkingSpaces(2);
+        savedKitnet.setDescription("Descrição atualizada via teste");
 
         KitnetResponseDTO mockResponseDTO = Mockito.mock(KitnetResponseDTO.class);
 
@@ -161,7 +164,7 @@ class KitnetControllerTest {
 
     @Test
     void shouldSearchKitnets() throws Exception {
-        Mockito.when(kitnetRepository.findByDescricaoContainingAndValorBetween(any(), any(), any()))
+        Mockito.when(kitnetRepository.findByDescriptionContainingAndValueBetween(any(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/kitnets/search")

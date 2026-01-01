@@ -22,14 +22,20 @@ public class KitnetMapper {
         KitnetResponseDTO dto = new KitnetResponseDTO();
 
         dto.setId(kitnet.getId());
-        dto.setNome(kitnet.getNome());
-        dto.setValor(kitnet.getValor());
-        dto.setVagas(kitnet.getVagas());
-        dto.setTaxa(kitnet.getTaxa());
-        dto.setDescricao(kitnet.getDescricao());
+        dto.setName(kitnet.getName());
+        dto.setValue(kitnet.getValue());
+        dto.setParkingSpaces(kitnet.getParkingSpaces());
+        dto.setFee(kitnet.getFee());
+        dto.setDescription(kitnet.getDescription());
+        
+        dto.setArea(kitnet.getArea());
+        dto.setFurnished(kitnet.getFurnished());
+        dto.setPetsAllowed(kitnet.getPetsAllowed());
+        dto.setBathroomType(kitnet.getBathroomType());
+        dto.setAmenities(kitnet.getAmenities());
 
         dto.setCep(kitnet.getCep());
-        dto.setLogradouro(kitnet.getLogradouro());
+        dto.setStreet(kitnet.getStreet());
         dto.setComplement(kitnet.getComplement());
         dto.setNumber(kitnet.getNumber());
         dto.setNeighborhood(kitnet.getNeighborhood());
@@ -46,7 +52,7 @@ public class KitnetMapper {
         if (kitnet.getPhotos() != null) {
             dto.setPhotos(kitnet.getPhotos().stream()
                     .map(this::toPhotoDTO)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
 
         return dto;
@@ -93,14 +99,20 @@ public class KitnetMapper {
 
         Kitnet kitnet = new Kitnet();
         // Mudamos de getNome() para nome(), de getValor() para valor(), etc.
-        kitnet.setNome(dto.nome());
-        kitnet.setValor(dto.valor());
-        kitnet.setVagas(dto.vagas());
-        kitnet.setTaxa(dto.taxa());
-        kitnet.setDescricao(dto.descricao());
+        kitnet.setName(dto.name());
+        kitnet.setValue(dto.value());
+        kitnet.setParkingSpaces(dto.parkingSpaces());
+        kitnet.setFee(dto.fee());
+        kitnet.setDescription(dto.description());
+        
+        kitnet.setArea(dto.area());
+        kitnet.setFurnished(dto.furnished());
+        kitnet.setPetsAllowed(dto.petsAllowed());
+        kitnet.setBathroomType(dto.bathroomType());
+        kitnet.setAmenities(dto.amenities());
 
         kitnet.setCep(dto.cep());
-        kitnet.setLogradouro(dto.logradouro());
+        kitnet.setStreet(dto.street());
         kitnet.setComplement(dto.complement());
         kitnet.setNumber(dto.number());
         kitnet.setNeighborhood(dto.neighborhood());

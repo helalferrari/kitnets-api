@@ -10,10 +10,10 @@ import java.util.List;
 @Repository
 public interface KitnetRepository extends JpaRepository<Kitnet, Long> {
 
-    List<Kitnet> findByDescricaoContainingAndValorBetween(
-            String termo,
-            Double valorMinimo,
-            Double valorMaximo
+    List<Kitnet> findByDescriptionContainingAndValueBetween(
+            String term,
+            Double minValue,
+            Double maxValue
     );
 
     List<Kitnet> findByUser(com.helalferrari.kitnetsapi.model.User user);

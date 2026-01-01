@@ -1,11 +1,14 @@
 package com.helalferrari.kitnetsapi.model;
 
+import com.helalferrari.kitnetsapi.model.enums.Amenity;
+import com.helalferrari.kitnetsapi.model.enums.BathroomType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +23,7 @@ class KitnetTest {
         // Assert
         assertNotNull(kitnet.getPhotos());
         assertTrue(kitnet.getPhotos().isEmpty());
-        assertNotNull(kitnet.getDataCadastro());
+        assertNotNull(kitnet.getCreatedAt());
     }
 
     @Test
@@ -75,6 +78,11 @@ class KitnetTest {
                 0.0,
                 1,
                 "Desc",
+                50.0, // area
+                true, // mobiliada
+                false, // aceitaAnimais
+                BathroomType.PRIVATIVO, // tipoBanheiro
+                new HashSet<>(), // comodidades
                 now,
                 now.plusDays(30),
                 "00000-000", // cep
@@ -93,8 +101,8 @@ class KitnetTest {
 
         // Assert
         assertEquals(id, kitnet.getId());
-        assertEquals(nome, kitnet.getNome());
-        assertEquals(valor, kitnet.getValor());
+        assertEquals(nome, kitnet.getName());
+        assertEquals(valor, kitnet.getValue());
         assertEquals(userMock, kitnet.getUser());
     }
 
@@ -140,19 +148,19 @@ class KitnetTest {
         // Arrange Object 1
         Kitnet kitnet1 = new Kitnet();
         kitnet1.setId(1L);
-        kitnet1.setNome("Kitnet A");
-        kitnet1.setDataCadastro(fixedDate); // Forçamos a data
+        kitnet1.setName("Kitnet A");
+        kitnet1.setCreatedAt(fixedDate); // Forçamos a data
 
         // Arrange Object 2
         Kitnet kitnet2 = new Kitnet();
         kitnet2.setId(1L);
-        kitnet2.setNome("Kitnet A");
-        kitnet2.setDataCadastro(fixedDate); // Forçamos a mesma data
+        kitnet2.setName("Kitnet A");
+        kitnet2.setCreatedAt(fixedDate); // Forçamos a mesma data
 
         // Arrange Object 3 (Diferente)
         Kitnet kitnet3 = new Kitnet();
         kitnet3.setId(2L);
-        kitnet3.setDataCadastro(fixedDate);
+        kitnet3.setCreatedAt(fixedDate);
 
         // Assert Equals & HashCode
         assertEquals(kitnet1, kitnet2); // Agora vai passar!
@@ -163,6 +171,6 @@ class KitnetTest {
         String stringResult = kitnet1.toString();
         assertTrue(stringResult.contains("Kitnet"));
         assertTrue(stringResult.contains("id=1"));
-        assertTrue(stringResult.contains("nome=Kitnet A"));
+        assertTrue(stringResult.contains("name=Kitnet A"));
     }
 }

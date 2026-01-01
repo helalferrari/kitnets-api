@@ -73,10 +73,10 @@ public class KitnetController {
         if (cep == null && min == null && max == null) {
             kitnets = kitnetRepository.findAll();
         } else {
-            Double valorMin = (min != null) ? min : 0.0;
-            Double valorMax = (max != null) ? max : 1000000.0;
-            String termoBusca = (cep != null) ? cep : "";
-            kitnets = kitnetRepository.findByDescricaoContainingAndValorBetween(termoBusca, valorMin, valorMax);
+            Double minValue = (min != null) ? min : 0.0;
+            Double maxValue = (max != null) ? max : 1000000.0;
+            String searchTerm = (cep != null) ? cep : "";
+            kitnets = kitnetRepository.findByDescriptionContainingAndValueBetween(searchTerm, minValue, maxValue);
         }
 
         List<KitnetResponseDTO> dtos = kitnets.stream()
@@ -150,15 +150,21 @@ public class KitnetController {
         // Nota: Aqui seria ideal verificar se o usuário logado é DONO dessa kitnet antes de deixar editar
         return kitnetRepository.findById(id)
                 .map(existingKitnet -> {
-                    existingKitnet.setNome(kitnetDetails.getNome());
-                    existingKitnet.setValor(kitnetDetails.getValor());
-                    existingKitnet.setTaxa(kitnetDetails.getTaxa());
-                    existingKitnet.setVagas(kitnetDetails.getVagas());
-                    existingKitnet.setDescricao(kitnetDetails.getDescricao());
+                    existingKitnet.setName(kitnetDetails.getName());
+                    existingKitnet.setValue(kitnetDetails.getValue());
+                    existingKitnet.setFee(kitnetDetails.getFee());
+                    existingKitnet.setParkingSpaces(kitnetDetails.getParkingSpaces());
+                    existingKitnet.setDescription(kitnetDetails.getDescription());
+                    
+                    existingKitnet.setArea(kitnetDetails.getArea());
+                    existingKitnet.setFurnished(kitnetDetails.getFurnished());
+                    existingKitnet.setPetsAllowed(kitnetDetails.getPetsAllowed());
+                    existingKitnet.setBathroomType(kitnetDetails.getBathroomType());
+                    existingKitnet.setAmenities(kitnetDetails.getAmenities());
                     
                     // Atualização dos campos de endereço
                     existingKitnet.setCep(kitnetDetails.getCep());
-                    existingKitnet.setLogradouro(kitnetDetails.getLogradouro());
+                    existingKitnet.setStreet(kitnetDetails.getStreet());
                     existingKitnet.setComplement(kitnetDetails.getComplement());
                     existingKitnet.setNumber(kitnetDetails.getNumber());
                     existingKitnet.setNeighborhood(kitnetDetails.getNeighborhood());
