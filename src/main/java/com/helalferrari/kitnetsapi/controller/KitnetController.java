@@ -156,6 +156,18 @@ public class KitnetController {
                     existingKitnet.setTaxa(kitnetDetails.getTaxa());
                     existingKitnet.setVagas(kitnetDetails.getVagas());
                     existingKitnet.setDescricao(kitnetDetails.getDescricao());
+                    
+                    // Atualização dos campos de endereço
+                    existingKitnet.setCep(kitnetDetails.getCep());
+                    existingKitnet.setLogradouro(kitnetDetails.getLogradouro());
+                    existingKitnet.setComplement(kitnetDetails.getComplement());
+                    existingKitnet.setNumber(kitnetDetails.getNumber());
+                    existingKitnet.setNeighborhood(kitnetDetails.getNeighborhood());
+                    existingKitnet.setCity(kitnetDetails.getCity());
+                    existingKitnet.setState(kitnetDetails.getState());
+                    existingKitnet.setIbge(kitnetDetails.getIbge());
+                    existingKitnet.setLongitude(kitnetDetails.getLongitude());
+                    existingKitnet.setLatitude(kitnetDetails.getLatitude());
 
                     Kitnet updated = kitnetRepository.save(existingKitnet);
                     return ResponseEntity.ok(kitnetMapper.toResponseDTO(updated));

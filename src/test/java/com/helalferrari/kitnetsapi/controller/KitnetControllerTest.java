@@ -95,6 +95,10 @@ class KitnetControllerTest {
         inputKitnet.setTaxa(200.00);
         inputKitnet.setVagas(2);
         inputKitnet.setDescricao("Descrição atualizada via teste");
+        inputKitnet.setCep("00000-000");
+        inputKitnet.setIbge("1234567");
+        inputKitnet.setLongitude("1.0");
+        inputKitnet.setLatitude("2.0");
 
         // Estado anterior (o que já existe no banco)
         Kitnet existingKitnet = new Kitnet();
