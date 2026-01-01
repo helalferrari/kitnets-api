@@ -35,6 +35,29 @@ public class Kitnet {
     @Column(name = "data_validade")
     private LocalDateTime dataValidade;
 
+    // Address Fields
+    private String cep;
+    private String logradouro;
+    private String complement;
+    private String number;
+    private String neighborhood;
+    private String city;
+    private String state;
+    private String ibge;
+    private String longitude;
+    private String latitude;
+    private Boolean nonumber;
+
+    @PrePersist
+    @PreUpdate
+    public void prePersist() {
+        if (this.number != null && !this.number.isBlank()) {
+            this.nonumber = false;
+        } else {
+            this.nonumber = true;
+        }
+    }
+
     // --- ALTERAÇÃO AQUI ---
     // Agora a Kitnet pertence a um User (que tem o papel de LANDLORD)
     @ManyToOne

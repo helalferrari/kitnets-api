@@ -68,7 +68,29 @@ class KitnetTest {
         LocalDateTime now = LocalDateTime.now();
 
         // Act
-        Kitnet kitnet = new Kitnet(id, nome, valor, 0.0, 1, "Desc", now, now.plusDays(30), userMock, new ArrayList<>());
+        Kitnet kitnet = new Kitnet(
+                id,
+                nome,
+                valor,
+                0.0,
+                1,
+                "Desc",
+                now,
+                now.plusDays(30),
+                "00000-000", // cep
+                "Log", // logradouro
+                "Comp", // complement
+                "123", // number
+                "Neigh", // neighborhood
+                "City", // city
+                "UF", // state
+                "1234567", // ibge
+                "1.0", // longitude
+                "2.0", // latitude
+                false, // nonumber
+                userMock,
+                new ArrayList<>()
+        );
 
         // Assert
         assertEquals(id, kitnet.getId());

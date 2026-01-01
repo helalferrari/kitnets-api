@@ -28,6 +28,18 @@ public class KitnetMapper {
         dto.setTaxa(kitnet.getTaxa());
         dto.setDescricao(kitnet.getDescricao());
 
+        dto.setCep(kitnet.getCep());
+        dto.setLogradouro(kitnet.getLogradouro());
+        dto.setComplement(kitnet.getComplement());
+        dto.setNumber(kitnet.getNumber());
+        dto.setNeighborhood(kitnet.getNeighborhood());
+        dto.setCity(kitnet.getCity());
+        dto.setState(kitnet.getState());
+        dto.setIbge(kitnet.getIbge());
+        dto.setLongitude(kitnet.getLongitude());
+        dto.setLatitude(kitnet.getLatitude());
+        dto.setNonumber(kitnet.getNonumber());
+
         if (kitnet.getUser() != null) {
             dto.setLandlord(toOwnerDTO(kitnet.getUser()));
         }
@@ -87,6 +99,18 @@ public class KitnetMapper {
         kitnet.setVagas(dto.vagas());
         kitnet.setTaxa(dto.taxa());
         kitnet.setDescricao(dto.descricao());
+
+        kitnet.setCep(dto.cep());
+        kitnet.setLogradouro(dto.logradouro());
+        kitnet.setComplement(dto.complement());
+        kitnet.setNumber(dto.number());
+        kitnet.setNeighborhood(dto.neighborhood());
+        kitnet.setCity(dto.city());
+        kitnet.setState(dto.state());
+        kitnet.setIbge(dto.ibge());
+        kitnet.setLongitude(dto.longitude());
+        kitnet.setLatitude(dto.latitude());
+        kitnet.setNonumber(dto.nonumber());
 
         return kitnet;
     }

@@ -45,6 +45,19 @@ class KitnetMapperTest {
         kitnet.setDescricao("Boa vizinhanca");
         kitnet.setUser(user);
         kitnet.setPhotos(photos);
+        
+        // Address fields
+        kitnet.setCep("00000-000");
+        kitnet.setLogradouro("Rua");
+        kitnet.setComplement("Comp");
+        kitnet.setNumber("123");
+        kitnet.setNeighborhood("Bairro");
+        kitnet.setCity("Cidade");
+        kitnet.setState("UF");
+        kitnet.setIbge("1234567");
+        kitnet.setLongitude("1.0");
+        kitnet.setLatitude("2.0");
+        kitnet.setNonumber(false);
 
         // Act
         KitnetResponseDTO result = mapper.toResponseDTO(kitnet);
@@ -53,6 +66,17 @@ class KitnetMapperTest {
         assertNotNull(result);
         assertEquals(kitnet.getId(), result.getId());
         assertEquals(kitnet.getNome(), result.getNome());
+        assertEquals(kitnet.getCep(), result.getCep());
+        assertEquals(kitnet.getLogradouro(), result.getLogradouro());
+        assertEquals(kitnet.getComplement(), result.getComplement());
+        assertEquals(kitnet.getNumber(), result.getNumber());
+        assertEquals(kitnet.getNeighborhood(), result.getNeighborhood());
+        assertEquals(kitnet.getCity(), result.getCity());
+        assertEquals(kitnet.getState(), result.getState());
+        assertEquals(kitnet.getIbge(), result.getIbge());
+        assertEquals(kitnet.getLongitude(), result.getLongitude());
+        assertEquals(kitnet.getLatitude(), result.getLatitude());
+        assertEquals(kitnet.getNonumber(), result.getNonumber());
 
         // Verifica mapeamento do User -> OwnerDTO
         assertNotNull(result.getLandlord());
@@ -103,7 +127,18 @@ class KitnetMapperTest {
                 1,
                 50.0,
                 "Descricao",
-                99L
+                99L,
+                "01001-000",
+                "Praça da Sé",
+                "lado ímpar",
+                "100",
+                "Sé",
+                "São Paulo",
+                "SP",
+                "3550308",
+                "-49.0629788",
+                "-26.9244749",
+                false
         );
 
         // Act
@@ -116,6 +151,17 @@ class KitnetMapperTest {
         assertEquals(dto.vagas(), result.getVagas());
         assertEquals(dto.taxa(), result.getTaxa());
         assertEquals(dto.descricao(), result.getDescricao());
+        assertEquals(dto.cep(), result.getCep());
+        assertEquals(dto.logradouro(), result.getLogradouro());
+        assertEquals(dto.complement(), result.getComplement());
+        assertEquals(dto.number(), result.getNumber());
+        assertEquals(dto.neighborhood(), result.getNeighborhood());
+        assertEquals(dto.city(), result.getCity());
+        assertEquals(dto.state(), result.getState());
+        assertEquals(dto.ibge(), result.getIbge());
+        assertEquals(dto.longitude(), result.getLongitude());
+        assertEquals(dto.latitude(), result.getLatitude());
+        assertEquals(dto.nonumber(), result.getNonumber());
         // Note: O mapper não seta o ID nem o User, isso é feito no Service
     }
 
