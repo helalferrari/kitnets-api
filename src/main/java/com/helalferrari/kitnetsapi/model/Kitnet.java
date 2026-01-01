@@ -46,15 +46,12 @@ public class Kitnet {
     private String ibge;
     private String longitude;
     private String latitude;
-    private Boolean nonumber;
 
     @PrePersist
     @PreUpdate
     public void prePersist() {
-        if (this.number != null && !this.number.isBlank()) {
-            this.nonumber = false;
-        } else {
-            this.nonumber = true;
+        if (this.number == null || this.number.isBlank()) {
+            this.number = "S/N";
         }
     }
 

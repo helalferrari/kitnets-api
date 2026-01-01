@@ -18,6 +18,5 @@ public record KitnetRequestDTO(
         String state,
         String ibge,
         @JsonProperty("long") String longitude,
-        @JsonProperty("lat") String latitude,
-        Boolean nonumber
+        @JsonProperty("lat") String latitude
 ) {}

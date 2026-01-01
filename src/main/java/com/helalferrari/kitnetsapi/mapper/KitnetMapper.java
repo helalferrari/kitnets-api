@@ -38,7 +38,6 @@ public class KitnetMapper {
         dto.setIbge(kitnet.getIbge());
         dto.setLongitude(kitnet.getLongitude());
         dto.setLatitude(kitnet.getLatitude());
-        dto.setNonumber(kitnet.getNonumber());
 
         if (kitnet.getUser() != null) {
             dto.setLandlord(toOwnerDTO(kitnet.getUser()));
@@ -110,7 +109,6 @@ public class KitnetMapper {
         kitnet.setIbge(dto.ibge());
         kitnet.setLongitude(dto.longitude());
         kitnet.setLatitude(dto.latitude());
-        kitnet.setNonumber(dto.nonumber());
 
         return kitnet;
     }

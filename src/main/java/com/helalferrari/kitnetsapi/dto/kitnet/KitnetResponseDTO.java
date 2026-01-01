@@ -30,8 +30,6 @@ public class KitnetResponseDTO {
     @JsonProperty("lat")
     private String latitude;
     
-    private Boolean nonumber;
-
     private OwnerDTO landlord;
     private List<PhotoDTO> photos;
 }

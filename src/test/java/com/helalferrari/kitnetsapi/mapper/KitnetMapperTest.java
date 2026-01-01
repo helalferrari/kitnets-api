@@ -57,7 +57,6 @@ class KitnetMapperTest {
         kitnet.setIbge("1234567");
         kitnet.setLongitude("1.0");
         kitnet.setLatitude("2.0");
-        kitnet.setNonumber(false);
 
         // Act
         KitnetResponseDTO result = mapper.toResponseDTO(kitnet);
@@ -76,7 +75,6 @@ class KitnetMapperTest {
         assertEquals(kitnet.getIbge(), result.getIbge());
         assertEquals(kitnet.getLongitude(), result.getLongitude());
         assertEquals(kitnet.getLatitude(), result.getLatitude());
-        assertEquals(kitnet.getNonumber(), result.getNonumber());
 
         // Verifica mapeamento do User -> OwnerDTO
         assertNotNull(result.getLandlord());
@@ -137,8 +135,7 @@ class KitnetMapperTest {
                 "SP",
                 "3550308",
                 "-49.0629788",
-                "-26.9244749",
-                false
+                "-26.9244749"
         );
 
         // Act
@@ -161,7 +158,6 @@ class KitnetMapperTest {
         assertEquals(dto.ibge(), result.getIbge());
         assertEquals(dto.longitude(), result.getLongitude());
         assertEquals(dto.latitude(), result.getLatitude());
-        assertEquals(dto.nonumber(), result.getNonumber());
         // Note: O mapper não seta o ID nem o User, isso é feito no Service
     }
 

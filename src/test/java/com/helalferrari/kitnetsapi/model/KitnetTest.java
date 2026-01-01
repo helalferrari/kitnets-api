@@ -87,7 +87,6 @@ class KitnetTest {
                 "1234567", // ibge
                 "1.0", // longitude
                 "2.0", // latitude
-                false, // nonumber
                 userMock,
                 new ArrayList<>()
         );
@@ -97,6 +96,38 @@ class KitnetTest {
         assertEquals(nome, kitnet.getNome());
         assertEquals(valor, kitnet.getValor());
         assertEquals(userMock, kitnet.getUser());
+    }
+
+    @Test
+    @DisplayName("Should set number to S/N when null or blank on PrePersist/PreUpdate")
+    void shouldSetNumberToSNWhenNullOrBlank() {
+        // Arrange
+        Kitnet kitnet = new Kitnet();
+        kitnet.setNumber(null);
+
+        // Act
+        kitnet.prePersist();
+
+        // Assert
+        assertEquals("S/N", kitnet.getNumber());
+
+        // Arrange 2 (Blank)
+        kitnet.setNumber("   ");
+        
+        // Act 2
+        kitnet.prePersist();
+        
+        // Assert 2
+        assertEquals("S/N", kitnet.getNumber());
+        
+        // Arrange 3 (Valid Number)
+        kitnet.setNumber("123");
+        
+        // Act 3
+        kitnet.prePersist();
+        
+        // Assert 3
+        assertEquals("123", kitnet.getNumber());
     }
 
     @Test
