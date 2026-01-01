@@ -36,15 +36,34 @@ public class Kitnet {
     private LocalDateTime dataValidade;
 
     // Address Fields
+    @Column(name = "cep")
     private String cep;
+
+    @Column(name = "logradouro")
     private String logradouro;
+
+    @Column(name = "complement")
     private String complement;
+
+    @Column(name = "number")
     private String number;
+
+    @Column(name = "neighborhood")
     private String neighborhood;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "state")
     private String state;
+
+    @Column(name = "ibge")
     private String ibge;
+
+    @Column(name = "longitude")
     private String longitude;
+
+    @Column(name = "latitude")
     private String latitude;
 
     @PrePersist
