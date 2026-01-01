@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/kitnets")
@@ -51,7 +50,7 @@ public class KitnetController {
     public ResponseEntity<List<KitnetResponseDTO>> getAllKitnets() {
         List<KitnetResponseDTO> dtos = kitnetRepository.findAll().stream()
                 .map(kitnetMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(dtos);
     }
 
@@ -82,7 +81,7 @@ public class KitnetController {
 
         List<KitnetResponseDTO> dtos = kitnets.stream()
                 .map(kitnetMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(dtos);
     }
@@ -94,7 +93,7 @@ public class KitnetController {
 
         List<KitnetResponseDTO> dtos = kitnetRepository.findByUser(currentUser).stream()
                 .map(kitnetMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(dtos);
     }
