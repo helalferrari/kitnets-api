@@ -28,7 +28,10 @@ public class Kitnet {
 
     // Colunas de Identificação e Características
     private String name;
+    
+    @Column(name = "\"value\"")
     private Double value;
+    
     private Double fee;
     private Integer parkingSpaces;
     private String description;

@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration; // Importante
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.helalferrari.kitnetsapi.dto.kitnet.KitnetSearchCriteriaDTO;
-import com.helalferrari.kitnetsapi.repository.spec.KitnetSpecification;
 import com.helalferrari.kitnetsapi.service.GroqService;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -59,12 +58,12 @@ class KitnetControllerTest {
 
     // --- MOCKS ---
     // Mesmo sem segurança, o Controller injeta esses componentes, então precisamos mockar
-    @MockBean private KitnetRepository kitnetRepository;
-    @MockBean private KitnetMapper kitnetMapper;
-    @MockBean private FileStorageService fileStorageService;
-    @MockBean private UserRepository userRepository;
-    @MockBean private TokenService tokenService;
-    @MockBean private GroqService groqService;
+    @MockitoBean private KitnetRepository kitnetRepository;
+    @MockitoBean private KitnetMapper kitnetMapper;
+    @MockitoBean private FileStorageService fileStorageService;
+    @MockitoBean private UserRepository userRepository;
+    @MockitoBean private TokenService tokenService;
+    @MockitoBean private GroqService groqService;
 
     @BeforeEach
     void setup() {
