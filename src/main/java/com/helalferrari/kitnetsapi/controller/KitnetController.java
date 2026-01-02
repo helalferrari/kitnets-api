@@ -9,7 +9,9 @@ import com.helalferrari.kitnetsapi.model.User;
 import com.helalferrari.kitnetsapi.model.enums.UserRole; // Import do Enum
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
 import com.helalferrari.kitnetsapi.repository.UserRepository;
+import com.helalferrari.kitnetsapi.repository.spec.KitnetSpecification;
 import com.helalferrari.kitnetsapi.service.FileStorageService;
+import com.helalferrari.kitnetsapi.service.GroqService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ public class KitnetController {
     private final KitnetRepository kitnetRepository;
     private final KitnetMapper kitnetMapper;
     private final FileStorageService fileStorageService;
+    private final GroqService groqService;
     // O UserRepository não é mais estritamente necessário no create,
     // mas pode ser mantido se for usado em outros métodos futuros.
     private final UserRepository userRepository;
@@ -37,11 +40,13 @@ public class KitnetController {
     public KitnetController(KitnetRepository kitnetRepository,
                             KitnetMapper kitnetMapper,
                             FileStorageService fileStorageService,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            GroqService groqService) {
         this.kitnetRepository = kitnetRepository;
         this.kitnetMapper = kitnetMapper;
         this.fileStorageService = fileStorageService;
         this.userRepository = userRepository;
+        this.groqService = groqService;
     }
 
     // --- MÉTODOS DE LEITURA (GET) ---
@@ -60,6 +65,18 @@ public class KitnetController {
                 .map(kitnetMapper::toResponseDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search/ai")
+    public ResponseEntity<List<KitnetResponseDTO>> searchByAI(@RequestParam String query) {
+        var criteria = groqService.extractSearchCriteria(query);
+        var spec = KitnetSpecification.fromCriteria(criteria);
+
+        List<KitnetResponseDTO> dtos = kitnetRepository.findAll(spec).stream()
+                .map(kitnetMapper::toResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/search")

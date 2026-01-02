@@ -5,7 +5,6 @@ import com.helalferrari.kitnetsapi.dto.kitnet.KitnetResponseDTO;
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.model.User;
-import com.helalferrari.kitnetsapi.model.enums.Amenity;
 import com.helalferrari.kitnetsapi.model.enums.BathroomType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

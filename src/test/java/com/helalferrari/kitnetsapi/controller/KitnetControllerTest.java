@@ -36,6 +36,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.helalferrari.kitnetsapi.dto.kitnet.KitnetSearchCriteriaDTO;
+import com.helalferrari.kitnetsapi.repository.spec.KitnetSpecification;
+import com.helalferrari.kitnetsapi.service.GroqService;
+import org.springframework.data.jpa.domain.Specification;
+
 @WebMvcTest(controllers = KitnetController.class,
         excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityFilter.class),
         excludeAutoConfiguration = {
@@ -59,6 +64,7 @@ class KitnetControllerTest {
     @MockBean private FileStorageService fileStorageService;
     @MockBean private UserRepository userRepository;
     @MockBean private TokenService tokenService;
+    @MockBean private GroqService groqService;
 
     @BeforeEach
     void setup() {
@@ -82,6 +88,20 @@ class KitnetControllerTest {
 
         // Injetamos isso na memória do Spring Security Holder
         SecurityContextHolder.setContext(securityContextMock);
+    }
+
+    @Test
+    void shouldSearchByAI() throws Exception {
+        KitnetSearchCriteriaDTO criteria = new KitnetSearchCriteriaDTO(
+                "termo", 100.0, 500.0, null, "City", null, true, false, null
+        );
+        Mockito.when(groqService.extractSearchCriteria(any())).thenReturn(criteria);
+        Mockito.when(kitnetRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/kitnets/search/ai")
+                        .param("query", "kitnet barata")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test

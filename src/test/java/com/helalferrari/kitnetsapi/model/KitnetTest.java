@@ -1,6 +1,5 @@
 package com.helalferrari.kitnetsapi.model;
 
-import com.helalferrari.kitnetsapi.model.enums.Amenity;
 import com.helalferrari.kitnetsapi.model.enums.BathroomType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

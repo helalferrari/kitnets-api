@@ -34,3 +34,4 @@ build/
 
 ### File upload landlord
 uploads/
+application-local.yaml

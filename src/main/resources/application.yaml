@@ -1,6 +1,15 @@
 spring:
   application:
     name: kitnets-api
+  config:
+    import: "optional:file:./application-local.yaml"
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: llama3-70b-8192
   datasource:
     url: jdbc:mariadb://localhost:3306/kitnets_db
     username: kitnet_user
@@ -9,7 +18,7 @@ spring:
     show-sql: true
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   sql:
     init:
       mode: never # <--- não preciso mais de massa de dados nesse momento
