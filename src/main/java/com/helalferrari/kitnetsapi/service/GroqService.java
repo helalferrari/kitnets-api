@@ -24,7 +24,11 @@ public class GroqService {
         String promptText = """
                 You are a search assistant for a Kitnet rental platform.
                 Extract search criteria from the user's query into a strict JSON format.
-                Match the amenities and bathroom types to the enums if possible.
+                
+                Rules:
+                1. Match amenities and bathroom types to their Enums strictly.
+                2. If a field is not mentioned or not applicable, set it to null. DO NOT use empty strings ("") for Enums or Numbers.
+                3. For 'bathroomType', use only 'PRIVATIVO' or 'COMPARTILHADO' or null.
                 
                 User Query: {query}
                 
