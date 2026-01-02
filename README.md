@@ -1,9 +1,10 @@
 # Kitnets API 🏠
 
-API RESTful desenvolvida para o gerenciamento de Kitnets, facilitando a conexão entre proprietários (landlords) e inquilinos (tenants). O sistema gerencia autenticação, cadastro e **edição** de imóveis, upload de fotos e buscas personalizadas.
+API RESTful desenvolvida para o gerenciamento de Kitnets, facilitando a conexão entre proprietários (landlords) e inquilinos (tenants). O sistema gerencia autenticação, cadastro e **edição** de imóveis, upload de fotos e buscas personalizadas, incluindo **busca inteligente por IA**.
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.12-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Spring AI](https://img.shields.io/badge/Spring_AI-1.0.0--M4-green?style=for-the-badge&logo=spring&logoColor=white)
 ![SonarQube](https://img.shields.io/badge/SonarQube-Integration-4E9BCD?style=for-the-badge&logo=sonarqube&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
@@ -14,10 +15,12 @@ Este projeto foi construído utilizando as melhores práticas do ecossistema Jav
 ### Linguagem e Frameworks
 - **Java 21:** Versão LTS mais recente, utilizando recursos modernos da linguagem.
 - **Spring Boot 3.4.12:** Framework base para desenvolvimento ágil.
+- **Spring AI:** Integração com modelos de Inteligência Artificial (Groq/OpenAI).
 - **Spring Data JPA:** Camada de persistência e ORM (Hibernate).
 - **Spring Security:** Gestão de autenticação e autorização robusta.
 
 ### Bibliotecas e Ferramentas
+- **Groq API:** LLM de ultra-baixa latência para processamento de linguagem natural.
 - **Auth0 Java JWT:** Implementação de tokens JWT para segurança stateless.
 - **Lombok:** Redução de código boilerplate (Getters, Setters, Builders).
 - **MariaDB Driver:** Conector para banco de dados relacional.
@@ -34,7 +37,7 @@ Este projeto foi construído utilizando as melhores práticas do ecossistema Jav
 
 ## 📦 Estrutura de Pacotes
 
-O projeto segue uma arquitetura em camadas bem definida para garantir a manutenibilidade e escalabilidade.
+O projeto segue uma arquitetura em camadas bem definida para garantir a manutenibilidade e escalabilidade. O domínio foi refatorado para o **Inglês** para seguir padrões internacionais.
 
 ```
 src/main/java/com/helalferrari/kitnetsapi
@@ -42,15 +45,16 @@ src/main/java/com/helalferrari/kitnetsapi
 ├── controller/       # Camada REST (Endpoints da API)
 ├── dto/              # Data Transfer Objects (Records para entrada/saída de dados)
 │   ├── auth/         # DTOs de autenticação (Login, Registro)
-│   └── kitnet/       # DTOs relacionados às Kitnets
+│   └── kitnet/       # DTOs relacionados às Kitnets (KitnetRequestDTO, KitnetSearchCriteriaDTO)
 ├── infra/            # Infraestrutura e configurações transversais
 │   ├── security/     # Filtros, Configurações de Segurança e Token Service
 │   └── exception/    # Global Exception Handler (Tratamento centralizado de erros)
 ├── mapper/           # Classes responsáveis por converter Entity <-> DTO
 ├── model/            # Entidades JPA (Representação das tabelas do banco)
-│   └── enums/        # Enumerações (ex: UserRole)
+│   └── enums/        # Enumerações (ex: UserRole, Amenity, BathroomType)
 ├── repository/       # Interfaces de acesso a dados (Spring Data JPA)
-└── service/          # Regras de negócio da aplicação
+│   └── spec/         # Specifications para buscas dinâmicas
+└── service/          # Regras de negócio da aplicação (incluindo GroqService)
 ```
 
 ---
@@ -61,47 +65,60 @@ src/main/java/com/helalferrari/kitnetsapi
 - **Java JDK 21** instalado.
 - **Git** instalado.
 - **Banco de Dados MariaDB** (ou Docker para subir um container).
+- **Chave de API do Groq** (para busca por IA).
 
-### Passos para execução
+### Configuração da API Key (Groq)
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/helalferrari/kitnets-api.git
-   cd kitnets-api
-   ```
+Para utilizar a busca por IA, você precisa de uma chave da Groq. Você pode configurá-la de duas formas:
 
-2. **Configuração do Banco de Dados:**
-   Certifique-se de configurar as variáveis de ambiente ou editar o `application.properties` (para dev local) com suas credenciais do banco.
-   
-   Exemplo de variáveis esperadas:
-   - `SPRING_DATASOURCE_URL`
-   - `SPRING_DATASOURCE_USERNAME`
-   - `SPRING_DATASOURCE_PASSWORD`
-   - `API_SECURITY_TOKEN_SECRET` (Segredo para geração do JWT)
+1.  **Variável de Ambiente (Recomendado):**
+    ```bash
+    export GROQ_API_KEY=sua_chave_aqui
+    ```
+2.  **Arquivo Local:**
+    Crie um arquivo `application-local.yaml` na raiz do projeto com o conteúdo:
+    ```yaml
+    GROQ_API_KEY: "sua_chave_aqui"
+    ```
+    (Este arquivo já está no `.gitignore`).
 
-3. **Executar a aplicação:**
-   Utilize o wrapper do Maven incluído no projeto:
-   
-   **Linux/Mac:**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-   
-   **Windows:**
-   ```cmd
-   mvnw.cmd spring-boot:run
-   ```
+### Massa de Dados
 
-4. **Executar Testes e Análise Sonar:**
-   Para rodar a suíte de testes e verificar a cobertura:
-   ```bash
-   ./mvnw clean verify
-   ```
-   
-   Para enviar a análise ao SonarQube (requer instância rodando localmente):
-   ```bash
-   ./mvnw sonar:sonar -Dsonar.token=SEU_TOKEN
-   ```
+O projeto inclui um arquivo compactado com 5000 registros de exemplo para teste de carga e busca.
+
+1.  Descompacte o arquivo:
+    ```bash
+    tar -xzvf src/main/resources/data.tar.gz -C src/main/resources
+    ```
+    Isso criará o arquivo `src/main/resources/data.sql`.
+
+2.  Execute a aplicação com o perfil de carga de dados (apenas na primeira vez):
+    ```bash
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=load-data
+    ```
+
+### Execução Padrão
+
+Para rodar a aplicação normalmente (sem recarregar dados):
+
+**Linux/Mac:**
+```bash
+./mvnw spring-boot:run
+```
+
+**Windows:**
+```cmd
+mvnw.cmd spring-boot:run
+```
+
+### Busca por IA
+
+Utilize o endpoint `/api/kitnets/search/ai` para fazer buscas em linguagem natural.
+
+Exemplo:
+```bash
+curl -G "http://localhost:8080/api/kitnets/search/ai" --data-urlencode "query=Procuro um apartamento mobiliado em Florianópolis com vista para o mar e que aceite pets até 2500 reais"
+```
 
 ---
 
@@ -121,5 +138,3 @@ Contribuições são bem-vindas! Siga os passos abaixo:
 ## 📝 Licença
 
 Este projeto está licenciado sob a licença **MIT**. Consulte o arquivo `LICENSE` para mais detalhes.
-
-A licença MIT permite que você use, copie, modifique, mescle, publique, distribua, sublicencie e/ou venda cópias do Software, desde que o aviso de direitos autorais e o aviso de permissão sejam incluídos em todas as cópias ou partes substanciais do Software.
