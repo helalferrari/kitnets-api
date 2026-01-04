@@ -84,30 +84,17 @@ Para utilizar a busca por IA, você precisa de uma chave da Groq. Você pode con
 
 ### Massa de Dados
 
-O projeto inclui um arquivo compactado com 5000 registros de exemplo para teste de carga e busca.
+O projeto inclui um arquivo compactado com 5000 registros de exemplo para teste de carga e busca. As kitnets estão vinculadas a usuários com IDs entre **1 e 5**.
 
-> **Importante:** Antes de carregar a massa de dados, você **deve** cadastrar o primeiro usuário do sistema. Esse usuário receberá o ID `1` e será o proprietário de todas as kitnets da massa de dados.
+**Importante:** Antes de carregar os dados, você deve criar manualmente pelo menos **5 usuários** com o papel de `LANDLORD` (proprietário) através da API, para garantir que as kitnets tenham donos válidos no banco de dados.
 
-1.  **Cadastrar Usuário Inicial:**
-    Execute um `POST` para `http://localhost:8080/auth/register` (via Postman ou cURL) com o corpo:
-    ```json
-    {
-      "name": "Seu Nome",
-      "email": "teste@teste.com",
-      "password": "123",
-      "role": "LANDLORD",
-      "cpf": "12345678901",
-      "phone": "11999999999"
-    }
-    ```
-
-2.  Descompacte o arquivo:
+1.  **Crie os usuários:** utilize o endpoint `/auth/register` para cadastrar 5 proprietários. Se o seu banco de dados estiver vazio, os IDs gerados serão de 1 a 5.
+2.  **Descompacte o arquivo de dados:**
     ```bash
     tar -xzvf src/main/resources/data.tar.gz -C src/main/resources
     ```
     Isso criará o arquivo `src/main/resources/data.sql`.
-
-3.  Execute a aplicação com o perfil de carga de dados (apenas na primeira vez):
+3.  **Carregue os dados:** Execute a aplicação com o perfil de carga de dados:
     ```bash
     ./mvnw spring-boot:run -Dspring-boot.run.profiles=load-data
     ```
