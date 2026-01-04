@@ -86,13 +86,28 @@ Para utilizar a busca por IA, você precisa de uma chave da Groq. Você pode con
 
 O projeto inclui um arquivo compactado com 5000 registros de exemplo para teste de carga e busca.
 
-1.  Descompacte o arquivo:
+> **Importante:** Antes de carregar a massa de dados, você **deve** cadastrar o primeiro usuário do sistema. Esse usuário receberá o ID `1` e será o proprietário de todas as kitnets da massa de dados.
+
+1.  **Cadastrar Usuário Inicial:**
+    Execute um `POST` para `http://localhost:8080/auth/register` (via Postman ou cURL) com o corpo:
+    ```json
+    {
+      "name": "Seu Nome",
+      "email": "teste@teste.com",
+      "password": "123",
+      "role": "LANDLORD",
+      "cpf": "12345678901",
+      "phone": "11999999999"
+    }
+    ```
+
+2.  Descompacte o arquivo:
     ```bash
     tar -xzvf src/main/resources/data.tar.gz -C src/main/resources
     ```
     Isso criará o arquivo `src/main/resources/data.sql`.
 
-2.  Execute a aplicação com o perfil de carga de dados (apenas na primeira vez):
+3.  Execute a aplicação com o perfil de carga de dados (apenas na primeira vez):
     ```bash
     ./mvnw spring-boot:run -Dspring-boot.run.profiles=load-data
     ```
