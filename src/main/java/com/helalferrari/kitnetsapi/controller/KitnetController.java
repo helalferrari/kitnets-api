@@ -6,7 +6,7 @@ import com.helalferrari.kitnetsapi.mapper.KitnetMapper;
 import com.helalferrari.kitnetsapi.model.Kitnet;
 import com.helalferrari.kitnetsapi.model.Photo;
 import com.helalferrari.kitnetsapi.model.User;
-import com.helalferrari.kitnetsapi.model.enums.UserRole; // Import do Enum
+import com.helalferrari.kitnetsapi.model.enums.UserRole;
 import com.helalferrari.kitnetsapi.repository.KitnetRepository;
 import com.helalferrari.kitnetsapi.repository.UserRepository;
 import com.helalferrari.kitnetsapi.repository.spec.KitnetSpecification;
@@ -15,8 +15,8 @@ import com.helalferrari.kitnetsapi.service.GroqService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication; // Novo Import
-import org.springframework.security.core.context.SecurityContextHolder; // Novo Import
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,8 +33,6 @@ public class KitnetController {
     private final KitnetMapper kitnetMapper;
     private final FileStorageService fileStorageService;
     private final GroqService groqService;
-    // O UserRepository não é mais estritamente necessário no create,
-    // mas pode ser mantido se for usado em outros métodos futuros.
     private final UserRepository userRepository;
 
     public KitnetController(KitnetRepository kitnetRepository,
@@ -48,8 +46,6 @@ public class KitnetController {
         this.userRepository = userRepository;
         this.groqService = groqService;
     }
-
-    // --- MÉTODOS DE LEITURA (GET) ---
 
     @GetMapping
     public ResponseEntity<List<KitnetResponseDTO>> getAllKitnets() {
@@ -115,43 +111,31 @@ public class KitnetController {
         return ResponseEntity.ok(dtos);
     }
 
-    // --- MÉTODOS DE ESCRITA (POST, PUT, DELETE) ---
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> create(
             @RequestPart("kitnet") KitnetRequestDTO requestDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        // 1. Recupera o Usuário Logado do Contexto de Segurança
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
 
-        // 2. Validação de Segurança (Opcional, mas recomendada):
-        // Garante que apenas LANDLORD pode cadastrar, mesmo que o front deixe passar.
         if (currentUser.getRole() != UserRole.LANDLORD && currentUser.getRole() != UserRole.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas proprietários podem cadastrar kitnets.");
         }
 
-        // 3. Converte DTO -> Entidade
         Kitnet kitnetParaSalvar = kitnetMapper.toEntity(requestDTO);
-
-        // 4. Associa a Kitnet ao Usuário Logado (Vínculo Implícito)
         kitnetParaSalvar.setUser(currentUser);
 
-        // 5. PRIMEIRA SALVADA: Gera ID da Kitnet
         Kitnet kitnetSalva = kitnetRepository.save(kitnetParaSalvar);
 
-        // 6. Processa arquivos (Usando ID do Usuário Logado para organizar pastas)
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                // Usa currentUser.getId()
                 String relativePath = fileStorageService.save(file, currentUser.getId());
                 String fileUrl = "/uploads/" + relativePath;
 
                 Photo photo = new Photo(null, fileUrl, kitnetSalva);
                 kitnetSalva.addPhoto(photo);
             }
-            // 7. SEGUNDA SALVADA: Atualiza com fotos
             kitnetSalva = kitnetRepository.save(kitnetSalva);
         }
 
@@ -164,7 +148,6 @@ public class KitnetController {
 
     @PutMapping("/{id}")
     public ResponseEntity<KitnetResponseDTO> updateKitnet(@PathVariable Long id, @RequestBody Kitnet kitnetDetails) {
-        // Nota: Aqui seria ideal verificar se o usuário logado é DONO dessa kitnet antes de deixar editar
         return kitnetRepository.findById(id)
                 .map(existingKitnet -> {
                     existingKitnet.setName(kitnetDetails.getName());

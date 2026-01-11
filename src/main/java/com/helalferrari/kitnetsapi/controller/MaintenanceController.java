@@ -18,7 +18,6 @@ public class MaintenanceController {
     }
 
     @PostMapping("/reprocess-thumbnails")
-    // Idealmente proteger com @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> reprocessThumbnails() {
         new Thread(fileStorageService::reprocessAllThumbnails).start();
         return ResponseEntity.ok("Processamento de thumbnails iniciado em background.");

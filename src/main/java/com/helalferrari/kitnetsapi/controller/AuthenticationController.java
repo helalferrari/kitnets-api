@@ -39,17 +39,10 @@ public class AuthenticationController {
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
 
-        // 1. Autentica o usuário
         var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        // 2. Recupera o objeto User completo do principal
         User user = (User) auth.getPrincipal();
-
-        // 3. Gera o token
         var token = tokenService.generateToken(user);
 
-        // 4. Retorna o DTO atualizado com Token + Dados do Usuário
-        // Obs: assumindo que user.getRole() retorna um Enum, usamos .toString() ou .getRole() direto se for String
         return ResponseEntity.ok(new LoginResponseDTO(token, user.getName(), user.getRole().toString()));
     }
 
@@ -59,14 +52,13 @@ public class AuthenticationController {
 
         String encryptedPassword = this.passwordEncoder.encode(data.password());
 
-        // AJUSTE AQUI: Adicionados cpf e phone para bater com o construtor da classe User
         User newUser = new User(
                 data.name(),
                 data.email(),
                 encryptedPassword,
                 data.role(),
-                data.cpf(),    // Novo campo
-                data.phone()   // Novo campo
+                data.cpf(),
+                data.phone()
         );
 
         this.userRepository.save(newUser);
