@@ -1,21 +1,20 @@
 services:
-  # Banco de Dados MariaDB
+  # Banco de Dados PostgreSQL
   db:
-    image: mariadb:11.4
+    image: postgres:16
     container_name: kitnets-db
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: kitnets_db
+      POSTGRES_DB: kitnets_db
       # Credenciais extraídas do application.yaml
-      MARIADB_USER: kitnet_user
-      MARIADB_PASSWORD: "6551"
+      POSTGRES_USER: kitnet_user
+      POSTGRES_PASSWORD: "6551"
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD-SHELL", "pg_isready -U kitnet_user -d kitnets_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,9 +31,11 @@ services:
       - "8080:8080"
     environment:
       # O Spring Boot lerá automaticamente essas variáveis
-      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/kitnets_db?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kitnets_db
       SPRING_DATASOURCE_USERNAME: kitnet_user
       SPRING_DATASOURCE_PASSWORD: "6551"
+      # Define o host do banco para a aplicação dentro do container
+      DB_HOST: db
       # Lê a chave do arquivo .env
       GROQ_API_KEY: ${GROQ_API_KEY}
       SPRING_PROFILES_ACTIVE: prod

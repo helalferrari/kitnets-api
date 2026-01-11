@@ -11,7 +11,7 @@ spring:
         options:
           model: llama-3.3-70b-versatile
   datasource:
-    url: jdbc:mariadb://kitnets-db:3306/kitnets_db?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/kitnets_db
     username: kitnet_user
     password: 6551
   jpa:
