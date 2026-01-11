@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-// Imports novos para o CORS
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,18 +32,14 @@ public class SecurityConfigurations {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
-                // 1. ADICIONE ESTA LINHA PARA ATIVAR O CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // -----------------------------------------
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/kitnets/my-kitnets").authenticated()
-                        // Libera GET nas kitnets para todos
                         .requestMatchers(HttpMethod.GET, "/api/kitnets").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/kitnets/**").permitAll()
-                        // Upload de arquivos (acesso a pasta uploads se servida via spring)
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -52,15 +47,11 @@ public class SecurityConfigurations {
                 .build();
     }
 
-    // 2. O BEAN DE CONFIGURAÇÃO DO CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permite apenas o seu Frontend
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        // Permite os métodos necessários (removidos TRACE e CONNECT por segurança)
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        // Permite os headers necessários
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

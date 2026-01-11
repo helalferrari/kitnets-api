@@ -17,21 +17,23 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    TokenService tokenService; // Agora ele vai achar a classe acima
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
         if (token != null) {
             var login = tokenService.validateToken(token);
-            if(login != null && !login.isEmpty()){ // Correção para evitar null pointer
+            if(login != null && !login.isEmpty()){
                 UserDetails user = userRepository.findByEmail(login);
 
-                if (user != null) { // Garante que achou o usuario
+                if (user != null) {
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

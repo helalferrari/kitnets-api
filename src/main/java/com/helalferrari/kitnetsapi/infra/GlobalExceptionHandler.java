@@ -12,7 +12,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Intercepta o erro de tamanho máximo excedido
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<Map<String, String>> handleMaxSizeException(MaxUploadSizeExceededException exc) {
 
@@ -20,7 +19,6 @@ public class GlobalExceptionHandler {
         response.put("erro", "Arquivo muito grande");
         response.put("mensagem", "O arquivo enviado excede o tamanho máximo permitido pelo sistema.");
 
-        // Retorna HTTP 413 (Payload Too Large) que é o código correto para isso
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
 
