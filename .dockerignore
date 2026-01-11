@@ -1,0 +1,24 @@
+# Ignora versionamento git
+.git
+.gitignore
+
+# Ignora configurações de IDEs
+.idea
+*.iml
+.vscode
+.classpath
+.project
+.settings
+
+# Ignora builds locais (o Docker fará o próprio build)
+target
+out
+build
+
+# Ignora arquivos temporários e logs
+*.log
+tmp
+help.md
+
+# Ignora documentação pesada não usada na execução
+docs
