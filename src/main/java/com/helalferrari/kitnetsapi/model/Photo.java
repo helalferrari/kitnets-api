@@ -18,10 +18,9 @@ public class Photo {
     private String url;
 
     @ManyToOne
-    @JoinColumn(name = "kitnet_id") // FK para a tabela Kitnet
+    @JoinColumn(name = "kitnet_id")
     private Kitnet kitnet;
 
-    // Construtor utilitário para facilitar os testes
     public Photo(String url) {
         this.url = url;
     }

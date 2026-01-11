@@ -18,7 +18,6 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
-    // Getters e Setters normais
     @Setter
     @Getter
     @Id
@@ -52,7 +51,6 @@ public class User implements UserDetails {
 
     private LocalDate createdAt = LocalDate.now();
 
-    // Construtores
     public User() {}
 
     public User(String name, String email, String password, UserRole role, String cpf, String phone) {
@@ -63,8 +61,6 @@ public class User implements UserDetails {
         this.phone = phone;
         this.cpf = cpf;
     }
-
-    // --- MÉTODOS DO SPRING SECURITY (UserDetails) ---
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -84,7 +80,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // O email será o login
+        return email;
     }
 
     @Override

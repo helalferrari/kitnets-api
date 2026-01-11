@@ -16,17 +16,15 @@ import java.util.Set;
 
 @Entity
 @Table(name = "KITNET")
-@Data // Lombok: Gera Getters, Setters, toString, equals e hashCode
-@NoArgsConstructor // Lombok: Gera um construtor vazio
-@AllArgsConstructor // Lombok: Gera um construtor com todos os campos
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Kitnet {
 
-    // Chave Primária (PK - id)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Colunas de Identificação e Características
     private String name;
     
     @Column(name = "\"value\"")
@@ -52,12 +50,11 @@ public class Kitnet {
     private Set<Amenity> amenities = new HashSet<>();
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now(); // Inicializa com data atual
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    // Address Fields
     @Column(name = "cep")
     private String cep;
 
@@ -88,6 +85,14 @@ public class Kitnet {
     @Column(name = "latitude")
     private String latitude;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "kitnet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Photo> photos = new ArrayList<>();
+
     @PrePersist
     @PreUpdate
     public void prePersist() {
@@ -96,18 +101,6 @@ public class Kitnet {
         }
     }
 
-    // --- ALTERAÇÃO AQUI ---
-    // Agora a Kitnet pertence a um User (que tem o papel de LANDLORD)
-    @ManyToOne
-    @JoinColumn(name = "user_id") // Nome da coluna FK no banco de dados
-    private User user;
-    // ----------------------
-
-    @OneToMany(mappedBy = "kitnet", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude // Evita Loop Infinito no Log/Debug
-    private List<Photo> photos = new ArrayList<>();
-
-    // Helper Method: Mantém a consistência da lista e do objeto pai
     public void addPhoto(Photo photo) {
         photos.add(photo);
         photo.setKitnet(this);
