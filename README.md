@@ -113,6 +113,68 @@ Para rodar a aplicação normalmente (sem recarregar dados):
 mvnw.cmd spring-boot:run
 ```
 
+## 📌 Exemplos de Uso (Postman/Curl)
+
+### 1. Cadastrar Usuário (Proprietário)
+**Endpoint:** `POST /auth/register`
+```json
+{
+  "name": "João Proprietário",
+  "email": "joao@email.com",
+  "password": "senha123",
+  "phone": "48999998888",
+  "cpf": "123.456.789-00",
+  "role": "LANDLORD"
+}
+```
+
+### 2. Login (Obter Token)
+**Endpoint:** `POST /auth/login`
+```json
+{
+  "email": "joao@email.com",
+  "password": "senha123"
+}
+```
+*Resposta:* Copie o `token` retornado para usar nas requisições autenticadas (Header `Authorization: Bearer <token>`).
+
+### 3. Cadastrar Kitnet
+**Endpoint:** `POST /api/kitnets`
+**Tipo:** `multipart/form-data`
+
+*   **Header (Autenticação):** Adicione o Token JWT.
+*   **Body (form-data):**
+
+| Key | Type | Value | Content-Type (Manual) |
+| :--- | :--- | :--- | :--- |
+| `kitnet` | Text | (JSON abaixo) | `application/json` |
+| `files` | File | (Selecione fotos) | - |
+
+**JSON para o campo `kitnet`:**
+```json
+{
+  "name": "Kitnet Moderna no Centro",
+  "value": 1500.0,
+  "parkingSpaces": 1,
+  "fee": 150.0,
+  "description": "Linda kitnet mobiliada próxima ao centro.",
+  "area": 35.5,
+  "furnished": true,
+  "petsAllowed": true,
+  "bathroomType": "PRIVATIVO",
+  "amenities": ["WIFI", "AR_CONDICIONADO"],
+  "cep": "88010-000",
+  "street": "Rua das Flores",
+  "number": "123",
+  "neighborhood": "Centro",
+  "city": "Florianópolis",
+  "state": "SC",
+  "long": "-48.54",
+  "lat": "-27.59"
+}
+```
+> **Dica Postman:** Para definir o `Content-Type` do campo `kitnet`, clique nos três pontinhos da linha do campo e habilite a coluna "Content-Type" se ela não estiver visível.
+
 ### Busca por IA
 
 Utilize o endpoint `/api/kitnets/search/ai` para fazer buscas em linguagem natural.
