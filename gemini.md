@@ -8,7 +8,7 @@ To run the SonarQube analysis, use:
       -Dsonar.projectName='kitnet' \
       -Dsonar.host.url=http://localhost:9000 \
       -Dsonar.token=sqp_574d08d359a23505a5954fc002193d6aeb60d50c \
-      -Dspring.datasource.url='jdbc:mariadb://localhost:3306/kitnets_db?allowPublicKeyRetrieval=true&useSSL=false'
+      -Dspring.datasource.url='jdbc:postgresql://localhost:5432/kitnets_db'
 ```
 
 ## Clean Code Practices
